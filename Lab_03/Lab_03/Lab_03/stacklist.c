@@ -1,5 +1,6 @@
-#include "stacklist.h"
 #include <stdio.h>
+#include "stacklist.h"
+
 
 int liststack_add(ListUnit** stack, int a)
 {
