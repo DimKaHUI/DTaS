@@ -36,12 +36,15 @@ int main(void)
 	printf("6. Check if line is a palindrome\n");
 	printf("7. View Array-based stack state\n");
 	printf("8. View List-based stack state\n");
+	printf("9. View removed elements' addresses\n");
 	printf("0. Exit\n");
 
 	ArrayStack astack;
 	arrstack_create(&astack);
 	ListUnit *lstack;
 	liststack_create(&lstack);
+	ListUnit *freed;
+	liststack_create(&freed);
 
 	int command;
 	int error = 0;
@@ -90,14 +93,23 @@ int main(void)
 			else
 			{
 				error = liststack_add(&lstack, elem);
+				if (error == 0)
+				{
+					printf("Address of added element: %d\n", lstack);
+				}
 			}
 		}
 		else if (command == 4)
 		{
 			int elem;
+			ListUnit *unit = lstack;
+			
 			error = liststack_remove(&lstack, &elem);
 			if (error == 0)
+			{
+				liststack_add(&freed, (int)unit);
 				printf("\nRemoved from list-based stack element value is: %d\n", elem);
+			}
 		}
 		else if (command == 5)
 		{
@@ -167,6 +179,16 @@ int main(void)
 			}
 			printf("\nSize: %d\n", size);
 			printf("Last element: %d\n", lstack->val);
+		}
+		else if (command == 9)
+		{
+			int i = 1;
+			while (freed != NULL)
+			{
+				int val;
+				liststack_remove(&freed, &val);
+				printf("#%3.3d : %d\n", i, val);
+			}
 		}
 		else
 			error = ERROR_UNRECOGNIZED_COMMAND;
