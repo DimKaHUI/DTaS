@@ -1,11 +1,11 @@
 #pragma once
 
 // Array-based stack
-#define STACK_ARR_MAXSIZE 64
+#define STACK_ARR_MAXSIZE 5
 
 // Error codes
-#define ERROR_STACK_ARR_OVERFLOW -0x11F
-#define ERROR_STACK_ARR_EMPTY -0x12F
+#define ERROR_STACK_ARR_OVERFLOW -11
+#define ERROR_STACK_ARR_EMPTY -12
 
 typedef struct ArrayStack
 {
@@ -16,4 +16,4 @@ typedef struct ArrayStack
 int arrstack_add(ArrayStack *stack, int a);
 int arrstack_remove(ArrayStack *stack, int *result);
 int arrstack_is_empty(ArrayStack *stack);
-ArrayStack arrstack_create();
+void arrstack_create(ArrayStack *stack);

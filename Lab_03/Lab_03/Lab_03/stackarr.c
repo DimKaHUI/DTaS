@@ -1,9 +1,13 @@
+#include <stdio.h>
 #include "stackarr.h"
 
 int arrstack_remove(ArrayStack* stack, int *result)
 {
-	if (stack->ps <= &(stack->arr[0]) - 1)
+	if (stack->ps <= stack->arr - 1)
+	{
+		//printf("%d is less than %d\n", (int)stack->ps, (int)(&stack->arr[0] - 1));
 		return ERROR_STACK_ARR_EMPTY;
+	}
 
 	*result = *stack->ps;
 	stack->ps--;
@@ -17,19 +21,21 @@ int arrstack_is_empty(ArrayStack* stack)
 	return 0;
 }
 
-ArrayStack arrstack_create()
+void arrstack_create(ArrayStack *stack)
 {
-	ArrayStack stack;
-	stack.ps = &stack.arr[0] - 1;
-	return stack;
+	printf("Creating: ps = %d, arr = %d\n", stack->ps, stack->arr);
+	stack->ps = stack->arr - 1;
 }
 
-int arrstack_add(ArrayStack *stack, int a)
+int arrstack_add(ArrayStack *argstack, int a)
 {
-	if (stack->ps == &stack->arr[STACK_ARR_MAXSIZE - 1])
+	if (argstack->ps >= &argstack->arr[STACK_ARR_MAXSIZE - 1])
+	{
+		argstack->ps = &argstack->arr[STACK_ARR_MAXSIZE - 1];
 		return ERROR_STACK_ARR_OVERFLOW;
+	}
 
-	stack->ps++;
-	*stack->ps = a;
+	argstack->ps++;
+	*(argstack->ps) = a;
 	return 0;
 }

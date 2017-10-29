@@ -66,6 +66,7 @@
   <ItemGroup>
     <ClCompile Include="main.c" />
     <ClCompile Include="stackarr.c" />
+    <ClCompile Include="stacklist.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stackarr.h" />
