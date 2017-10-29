@@ -11,7 +11,7 @@ typedef struct ListUnit
 {
 	int val;
 	struct ListUnit *prev;
-}ListUnit;
+} ListUnit;
 
 
 int liststack_add(ListUnit **stack, int a);
