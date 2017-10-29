@@ -1,7 +1,7 @@
 #pragma once
 
 // Array-based stack
-#define STACK_ARR_MAXSIZE 200
+#define STACK_ARR_MAXSIZE 2000
 
 // Error codes
 #define ERROR_STACK_ARR_OVERFLOW -11
