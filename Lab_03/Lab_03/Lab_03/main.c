@@ -63,7 +63,7 @@ int main(void)
 			int elem;			
 			error = arrstack_remove(&astack, &elem);
 			if (error == 0)
-				printf("Removed from array-based stack element value is: %d\n", elem);
+				printf("\nRemoved from array-based stack element value is: %d\n", elem);
 		}
 		else if (command == 3)
 		{
@@ -82,7 +82,7 @@ int main(void)
 		{
 			int elem;
 			error = liststack_remove(&lstack, &elem);
-			printf("Removed from list-based stack element value is: %d\n", elem);
+			printf("\nRemoved from list-based stack element value is: %d\n", elem);
 		}
 		else
 			error = ERROR_UNRECOGNIZED_COMMAND;
