@@ -6,7 +6,6 @@ int liststack_add(ListUnit** stack, int a)
 {
 	if (liststack_is_empty(stack))
 	{
-		printf("Is empty\n");
 		*stack = malloc(sizeof(ListUnit));
 		if (*stack == NULL)
 		{
