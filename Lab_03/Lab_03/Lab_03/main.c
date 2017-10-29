@@ -34,6 +34,8 @@ int main(void)
 	printf("4. Remove element (list-based)\n");
 	printf("5. Analize and print results\n");
 	printf("6. Check if line is a palindrome\n");
+	printf("7. View Array-based stack state\n");
+	printf("8. View List-based stack state\n");
 	printf("0. Exit\n");
 
 	ArrayStack astack;
@@ -146,6 +148,25 @@ int main(void)
 					printf("This line is not a palidrome\n");
 				error = 0;
 			}
+		}
+		else if (command == 7)
+		{
+			printf("\nSize: %d\n", astack.ps - astack.arr);
+			printf("Last element: %d\n", *astack.ps);
+		}
+		else if (command == 8)
+		{
+			int size = 0;
+			ListUnit *unit = lstack;
+			printf("Elements' addresses: \n");
+			while (unit != NULL)
+			{
+				printf("#%3.3d : %d\n", size + 1, unit);
+				size++;
+				unit = unit->prev;
+			}
+			printf("\nSize: %d\n", size);
+			printf("Last element: %d\n", lstack->val);
 		}
 		else
 			error = ERROR_UNRECOGNIZED_COMMAND;
