@@ -10,7 +10,7 @@
 typedef struct ListUnit
 {
 	int val;
-	struct ListUnit *next;
+	struct ListUnit *prev;
 }ListUnit;
 
 
