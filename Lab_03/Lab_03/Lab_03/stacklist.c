@@ -11,7 +11,7 @@ int liststack_add(ListUnit** stack, int a)
 		{
 			return ERROR_ALLOCATION_ERROR;
 		}
-		ListUnit unit = { .val = a, .prev = NULL };
+		ListUnit unit = { .val = a, .next = NULL };
 		**stack = unit;
 		return 0;
 	}
@@ -22,7 +22,7 @@ int liststack_add(ListUnit** stack, int a)
 	{
 		return ERROR_ALLOCATION_ERROR;
 	}
-	ListUnit unit = { .val = a, .prev = prev };
+	ListUnit unit = { .val = a, .next = prev };
 	**stack = unit;
 
 	return 0;
@@ -34,7 +34,7 @@ int liststack_remove(ListUnit** stack, int* result)
 	{
 		return ERROR_STACK_LIST_EMPTY;
 	}
-	ListUnit *prev = (*stack)->prev;
+	ListUnit *prev = (*stack)->next;
 	*result = (*stack)->val;
 	free(*stack);
 	*stack = prev;
