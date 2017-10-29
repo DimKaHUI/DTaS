@@ -20,7 +20,8 @@ int main(void)
 	printf("3. Print results.\n");
 	printf("0. Exit\n");
 
-	
+	ArrayStack astack = arrstack_create();
+	ListStack lstack = liststack_create();
 
 	int command;
 	int error = 0;
@@ -39,7 +40,21 @@ int main(void)
 		}
 		else if (command == 1)
 		{
-			// TODO
+			int elem;
+			printf("Input element: ");
+			if (scanf("%d", &elem) != 1)
+			{
+				error = ERROR_INCORRECT_INPUT_SYMBOLS;
+			}
+			else
+			{
+				int erra = arrstack_add(&astack, elem);
+				int errb = liststack_add(&lstack, elem);
+				if (erra != 0)
+					error = erra;
+				if (errb != 0)
+					error = errb;
+			}
 		}
 		else if (command == 2)
 		{
