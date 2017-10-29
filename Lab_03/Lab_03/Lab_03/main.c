@@ -5,6 +5,8 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
+#include "stackarr.h"
+#include "stacklist.h"
 
 // Error codes
 #define ERROR_UNRECOGNIZED_COMMAND 0xCD
@@ -12,11 +14,13 @@
 
 int main(void)
 {
-	printf("Stack\nPring number of menu element to proceed.");
+	printf("Stack\nPring number of menu element to proceed.\n");
 	printf("1. Add element.\n");
 	printf("2. Remove element.\n");
 	printf("3. Print results.\n");
 	printf("0. Exit\n");
+
+	
 
 	int command;
 	int error = 0;
@@ -33,7 +37,7 @@ int main(void)
 			printf("Finishing\n");
 			error = 0;
 		}
-		if (command == 1)
+		else if (command == 1)
 		{
 			// TODO
 		}
