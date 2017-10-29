@@ -9,9 +9,13 @@
 #include "stackarr.h"
 #include "stacklist.h"
 
+#define LINE_LENGTH 64
+
 // Error codes
 #define ERROR_UNRECOGNIZED_COMMAND -1
 #define ERROR_INCORRECT_INPUT_SYMBOLS -2
+#define ERROR_READING -3
+#define ERROR_LINE_EMPTY -4
 
 #pragma intrinsic(__rdtsc)
 void analize();
@@ -29,6 +33,7 @@ int main(void)
 	printf("3. Add element (list-based)\n");
 	printf("4. Remove element (list-based)\n");
 	printf("5. Analize and print results\n");
+	printf("6. Check if line is a palindrome\n");
 	printf("0. Exit\n");
 
 	ArrayStack astack;
@@ -96,6 +101,52 @@ int main(void)
 		{
 			analize();
 		}
+		else if (command == 6)
+		{
+			printf("Input the line: ");
+			fflush(stdin);
+			char line[LINE_LENGTH];
+			if (gets_s(line, LINE_LENGTH) == NULL)
+			{
+				fflush(stdin);
+				return ERROR_READING;
+			}
+
+			fflush(stdin);
+
+			ArrayStack stack;
+			arrstack_create(&stack);
+			int length = 0;
+			for (int i = 0; line[i] != '\0'; i++, length++)
+			{
+				arrstack_add(&stack, (int)line[i]);
+			}
+
+			if (length == 0)
+			{
+				error = ERROR_LINE_EMPTY;
+			}
+			else
+			{
+
+
+				int is_palindrome = 1;
+				for (int i = length - 1; i >= 0; i--)
+				{
+					int elem;
+					arrstack_remove(&stack, &elem);
+					if ((char)elem == line[length - i - 1])
+						continue;
+					is_palindrome = 0;
+				}
+
+				if (is_palindrome)
+					printf("This line is a palindrome\n");
+				else
+					printf("This line is not a palidrome\n");
+				error = 0;
+			}
+		}
 		else
 			error = ERROR_UNRECOGNIZED_COMMAND;
 
@@ -119,6 +170,12 @@ int main(void)
 			break;
 		case ERROR_STACK_ARR_OVERFLOW:
 			printf("Array-based stack is full.\n");
+			break;
+		case ERROR_LINE_EMPTY:
+			printf("The line is empty!\n");
+			break;
+		case ERROR_READING:
+			printf("An error occured while reading the line! May be an overflow, maximum length is %d\n", LINE_LENGTH);
 			break;
 		default:
 			printf("Success!\n");
