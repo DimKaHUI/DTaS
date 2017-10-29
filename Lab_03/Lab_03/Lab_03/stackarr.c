@@ -5,7 +5,6 @@ int arrstack_remove(ArrayStack* stack, int *result)
 {
 	if (stack->ps <= stack->arr - 1)
 	{
-		//printf("%d is less than %d\n", (int)stack->ps, (int)(&stack->arr[0] - 1));
 		return ERROR_STACK_ARR_EMPTY;
 	}
 
@@ -23,7 +22,6 @@ int arrstack_is_empty(ArrayStack* stack)
 
 void arrstack_create(ArrayStack *stack)
 {
-	printf("Creating: ps = %d, arr = %d\n", stack->ps, stack->arr);
 	stack->ps = stack->arr - 1;
 }
 

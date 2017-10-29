@@ -24,13 +24,14 @@ int main(void)
 
 	ArrayStack astack;
 	arrstack_create(&astack);
-	ListStack lstack = liststack_create();
+	ListUnit *lstack;
+	liststack_create(&lstack);
 
 	int command;
 	int error = 0;
 	do
 	{
-		printf("ps = %d, arr = %d\n", astack.ps, astack.arr);
+		printf("ps = %d\n", lstack);
 
 		fflush(stdin);
 		printf("\nInput the command: ");
@@ -54,7 +55,6 @@ int main(void)
 			}
 			else
 			{
-				printf("Invoking add.\n");
 				error = arrstack_add(&astack, elem);
 			}
 		}
