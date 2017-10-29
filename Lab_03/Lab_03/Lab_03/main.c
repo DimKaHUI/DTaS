@@ -31,8 +31,6 @@ int main(void)
 	int error = 0;
 	do
 	{
-		printf("ps = %d\n", lstack);
-
 		fflush(stdin);
 		printf("\nInput the command: ");
 		if (scanf("%d", &command) != 1)
