@@ -180,9 +180,9 @@ int main(void)
 				printf("#%3.3d : %d\n", size + 1, unit);
 				size++;
 				unit = unit->prev;
+				printf("Last element: %d\n", lstack->val);
 			}
-			printf("\nSize: %d\n", size);
-			printf("Last element: %d\n", lstack->val);
+			printf("\nSize: %d\n", size);			
 		}
 		else if (command == 9)
 		{
