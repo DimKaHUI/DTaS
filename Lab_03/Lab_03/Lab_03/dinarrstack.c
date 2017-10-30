@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#pragma message("It was experimentally proved, that the best block size for 64 elements is 8")
 #define BLOCK_ELEMENTS 8
 
 int dinarr_add(DinArrStack* stack, int a)
@@ -22,7 +23,6 @@ int dinarr_add(DinArrStack* stack, int a)
 	int cur_size = stack->ps - stack->arr;
 	if (cur_size % BLOCK_ELEMENTS == 0)
 	{
-		//printf("New size: %d\n", new_size * sizeof(int));
 		stack->arr = realloc(stack->arr, (cur_size + BLOCK_ELEMENTS) * sizeof(int));
 		if (stack->arr == NULL)
 		{
@@ -47,17 +47,13 @@ int dinarr_remove(DinArrStack* stack, int* result)
 	int cur_size = stack->ps - stack->arr;
 	if (cur_size % BLOCK_ELEMENTS == 0)
 	{
-		//printf("Realloc\n");
 		stack->arr = realloc(stack->arr, (cur_size - BLOCK_ELEMENTS) * sizeof(int));
 		if (stack->arr == NULL)
 		{
 			return ERROR_DINARR_ALLOCATION;
 		}
 	}
-	else
-	{
-		//printf("No realloc\n");
-	}
+
 	stack->ps--;
 	return 0;
 }
