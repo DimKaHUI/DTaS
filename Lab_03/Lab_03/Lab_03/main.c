@@ -227,6 +227,9 @@ int main(void)
 		case ERROR_READING:
 			printf("An error occured while reading the line! May be an overflow, maximum length is %d\n", LINE_LENGTH);
 			break;
+		case ERROR_STACK_LIST_OVERFLOW:
+			printf("Size of list-stack reached it's thresold!.\n");
+			break;
 		default:
 			printf("Success!\n");
 		}
