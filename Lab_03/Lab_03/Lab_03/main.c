@@ -194,6 +194,7 @@ int main(void)
 				int val;
 				liststack_remove(&freed, &val);
 				printf("#%3.3d : %d\n", i, val);
+				i++;
 			}
 		}
 		else
