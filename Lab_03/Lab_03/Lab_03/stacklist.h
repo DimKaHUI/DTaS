@@ -13,7 +13,7 @@ typedef struct ListUnit
 } ListUnit;
 
 
-int liststack_add(ListUnit **stack, int a);
-int liststack_remove(ListUnit **stack, int *result);
-int liststack_is_empty(ListUnit **stack);
-void liststack_create(ListUnit**);
+int liststack_add(ListUnit **stack, int a);           // Добавляет элемент в списочный стек
+int liststack_remove(ListUnit **stack, int *result);  // Удаляет элемент из списочного стека
+int liststack_is_empty(ListUnit **stack);             // Проверяет, является ли списочный стек пустым
+void liststack_create(ListUnit**);                    // Инициализирует пустой стек
