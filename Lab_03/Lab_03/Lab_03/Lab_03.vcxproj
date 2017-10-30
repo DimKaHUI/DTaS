@@ -64,11 +64,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="dinarrstack.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="stackarr.c" />
     <ClCompile Include="stacklist.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="dinarrstack.h" />
     <ClInclude Include="stackarr.h" />
     <ClInclude Include="stacklist.h" />
   </ItemGroup>

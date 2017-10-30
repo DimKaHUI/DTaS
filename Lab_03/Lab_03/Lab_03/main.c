@@ -9,6 +9,7 @@
 #include <intrin.h>
 #include "stackarr.h"
 #include "stacklist.h"
+#include "dinarrstack.h"
 
 #define LINE_LENGTH 64
 
@@ -28,6 +29,8 @@ unsigned __int64 tick()
 
 int main(void)
 {
+	printf("Size of PTR: %d\n\n", sizeof(int*));
+
 	printf("Stack\nPring number of menu element to proceed.\n");
 	printf("1. Add element (array-based)\n");
 	printf("2. Remove element (array-based)\n");
@@ -236,6 +239,8 @@ void analize()
 	arrstack_create(&astack);
 	ListUnit *lstack;
 	liststack_create(&lstack);
+	DinArrStack dstack;
+	dinarr_create(&dstack);
 
 	srand(rand());
 
@@ -255,6 +260,13 @@ void analize()
 	}
 	adding_time_list = tick() - adding_time_list;
 
+	unsigned __int64 adding_time_din = tick();
+	for (int i = 0; i < STACK_ARR_MAXSIZE; i++)
+	{
+		dinarr_add(&dstack, rand() % 100);
+	}
+	adding_time_din = tick() - adding_time_din;
+
 	// Removing
 
 	unsigned __int64 removing_time_arr = tick();
@@ -273,10 +285,19 @@ void analize()
 	}
 	removing_time_list = tick() - removing_time_list;
 
+	unsigned __int64 removing_time_din = tick();
+	for (int i = 0; i < STACK_ARR_MAXSIZE; i++)
+	{
+		int elem;
+		dinarr_remove(&dstack, &elem);
+	}
+	removing_time_din = tick() - removing_time_din;
+
 	
 	// Counting memory
 	int arr_mem = sizeof(ArrayStack);
 	int list_mem = sizeof(ListUnit)* STACK_ARR_MAXSIZE;
+	int din_mem = sizeof(int*)* (STACK_ARR_MAXSIZE + 1);
 
 	// Printing results
 
@@ -290,8 +311,17 @@ void analize()
 	printf("	Removing time: %llu\n", removing_time_list);
 	printf("	Memory: %d\n", list_mem);
 
+	printf("\nDinamic-array based stack: \n");
+	printf("	Adding time: %llu\n", adding_time_din);
+	printf("	Removing time: %llu\n", removing_time_din);
+	printf("	Memory: %d\n", din_mem);
+
 	// Percentage
-	printf("Adding time, array-based time is smaller than list-based in %2.2f times\n", (float)adding_time_list / adding_time_arr);
-	printf("Removing time, array-based time is smaller than list-based in %2.2f times\n", (float)removing_time_list / removing_time_arr);
-	printf("Array-based memory is smaller than list-based memory in %2.2f times\n", (float)list_mem / arr_mem);
+	printf("Adding time, array-based time is SMALLER than list-based in %2.2f times\n", (float)adding_time_list / adding_time_arr);
+	printf("Removing time, array-based time is SMALLER than list-based in %2.2f times\n", (float)removing_time_list / removing_time_arr);
+	printf("Array-based memory is SMALLER than list-based memory in %2.2f times\n", (float)list_mem / arr_mem);
+
+	printf("\nAdding time, dinamic array-based time is SMALLER than list-based in %2.2f times\n", (float)adding_time_list / adding_time_din);
+	printf("Removing time, dinamic array-based time is BIGGER than list-based in %2.2f times\n", 1 / ((float)removing_time_list / removing_time_din));
+	printf("Dinamic Array-based memory is SMALLER than list-based memory in %2.2f times\n", ((float)list_mem / din_mem));
 }
