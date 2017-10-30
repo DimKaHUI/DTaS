@@ -10,6 +10,13 @@
 void make_std(char *line);
 void sort_alph(char *line);
 void sort_len(char *line);
+int slen(char *line)
+{
+	int i = 0;
+	while (line[i] != '\0')
+		i++;
+	return i;
+}
 
 int main(int argc, char **argv)
 {
@@ -226,33 +233,65 @@ void sort_alph(char* line)
 		words[j] = NULL;
 	}
 
-	printf("Alllocation completed!\n");
+	//printf("Alllocation completed!\n");
 
 	i = 0;
 	int word_num = 0;
 	while (line[i] != '\0')
 	{
-
-		word_num++;
-		i++;
-
 		// Counting length
 		int k = i;
 		while (line[k] != '\0' && line[k] != ' ')
 			k++;
-
-		printf("K - i + 1 = %d\n", k - i + 1);
-		words[word_num] = malloc(k - i + 1);
-		for (k = i; line[k] != ' ' && line[k] != ' '; k++)
+		
+		if (words[word_num] == NULL)
 		{
-			words[word_num][k - i] = line[k];
+			words[word_num] = malloc(k - i + 1);
+			if (words[word_num] == NULL)
+				printf("Allocation error\n");
 		}
-		words[k] = '\0';
+
+		if (line[i] == ' ')
+			i++;
+		int pos = i;
+		for (k = i; line[k] != ' ' && line[k] != '\0'; k++)
+		{
+			words[word_num][k - pos] = line[k];
+			i++;
+		}
+		words[word_num][k - pos] = '\0';
+		word_num++;
 	}
 
 	// Printing words
 	for (int j = 0; j < words_cnt; j++)
 	{
-		printf("%s\n", words[j]);
+		printf("%2.2d : %s|END\n", j + 1, words[j]);
+	}
+
+	printf("\nSorted: \n");
+
+	// Sort via length
+	// BaseType - любой перечисляемый тип 
+	// typedef int BaseType - пример
+	unsigned j;
+	for (unsigned k = words_cnt / 2; k > 0; k /= 2)
+	for (unsigned iter = k; iter < words_cnt; iter++)
+	{
+		char * t = words[iter];
+		for (j = iter; j >= k; j -= k)
+		{
+			if (slen(t) < slen(words[j - k]))
+				words[j] = words[j - k];
+			else
+				break;
+		}
+		words[j] = t;
+	}
+
+	// Printing words
+	for (int j = 0; j < words_cnt; j++)
+	{
+		printf("%2.2d : %s\n", j + 1, words[j]);
 	}
 }
