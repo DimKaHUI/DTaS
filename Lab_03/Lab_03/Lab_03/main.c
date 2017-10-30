@@ -174,14 +174,16 @@ int main(void)
 		{
 			int size = 0;
 			ListUnit *unit = lstack;
+			if (unit != NULL)
+				printf("Last element: %d\n", lstack->val);
 			printf("Elements' addresses: \n");
 			while (unit != NULL)
 			{
 				printf("#%3.3d : %d\n", size + 1, unit);
 				size++;
-				unit = unit->prev;
-				printf("Last element: %d\n", lstack->val);
+				unit = unit->prev;				
 			}
+			
 			printf("\nSize: %d\n", size);			
 		}
 		else if (command == 9)
