@@ -1,7 +1,7 @@
 #pragma once
 
 // List-based stack
-#define STAK_LIST_MAXSIZE 5
+#define STAK_LIST_MAXSIZE 64
 
 // Error codes
 #define ERROR_ALLOCATION_ERROR -21
