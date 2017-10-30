@@ -293,5 +293,5 @@ void analize()
 	// Percentage
 	printf("Adding time, array-based time is smaller than list-based in %2.2f times\n", (float)adding_time_list / adding_time_arr);
 	printf("Removing time, array-based time is smaller than list-based in %2.2f times\n", (float)removing_time_list / removing_time_arr);
-	printf("Array-based memeory is smaller than list-based memeory in %2.2f times\n", (float)list_mem / arr_mem);
+	printf("Array-based memory is smaller than list-based memory in %2.2f times\n", (float)list_mem / arr_mem);
 }
