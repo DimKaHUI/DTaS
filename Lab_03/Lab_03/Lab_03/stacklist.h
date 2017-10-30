@@ -1,5 +1,4 @@
 #pragma once
-#include <stdlib.h>
 
 // List-based stack
 
