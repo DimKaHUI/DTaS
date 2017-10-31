@@ -5,6 +5,17 @@
 
 int liststack_add(ListUnit** stack, int a)
 {
+	int size = 0;
+	ListUnit *counter = *stack;
+	while (counter != NULL)
+	{
+		size++;
+		counter = counter->prev;
+	}
+	if (size >= STAK_LIST_MAXSIZE)
+		return ERROR_STACK_LIST_OVERFLOW;
+
+	//printf("\nSize: %d\n", size);
 	if (liststack_is_empty(stack))
 	{
 		*stack = malloc(sizeof(ListUnit));
