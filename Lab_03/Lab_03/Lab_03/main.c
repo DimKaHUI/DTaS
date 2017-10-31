@@ -29,8 +29,6 @@ unsigned __int64 tick()
 
 int main(void)
 {
-	printf("Size of PTR: %d\n\n", sizeof(int*));
-
 	printf("Stack\nPring number of menu element to proceed.\n");
 	printf("1. Add element (array-based)\n");
 	printf("2. Remove element (array-based)\n");
@@ -161,14 +159,18 @@ int main(void)
 				if (is_palindrome)
 					printf("This line is a palindrome\n");
 				else
-					printf("This line is not a palidrome\n");
+					printf("This line is not a palindrome\n");
 				error = 0;
 			}
 		}
 		else if (command == 7)
 		{
-			printf("\nSize: %d\n", astack.ps - astack.arr);
-			printf("Last element: %d\n", *astack.ps);
+			printf("\nSize: %d\n", astack.ps - astack.arr + 1);
+			
+			for (int* i = astack.ps; i >= astack.arr; i--)
+			{
+				printf("%d\n", *i);
+			}
 		}
 		else if (command == 8)
 		{
@@ -179,7 +181,7 @@ int main(void)
 			printf("Elements' addresses: \n");
 			while (unit != NULL)
 			{
-				printf("#%3.3d : %d\n", size + 1, unit);
+				printf("#%3.3d : %d : %d\n", size + 1, unit, unit->val);
 				size++;
 				unit = unit->prev;				
 			}

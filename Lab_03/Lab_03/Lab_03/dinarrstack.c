@@ -9,7 +9,8 @@ int dinarr_add(DinArrStack* stack, int a)
 {
 	if (dinarr_is_empty(stack))
 	{
-		stack->arr = malloc(sizeof(int)*BLOCK_ELEMENTS);
+		printf("Size: %d\n", sizeof(int)* BLOCK_ELEMENTS);
+		stack->arr = malloc(sizeof(int) * BLOCK_ELEMENTS);
 		if (stack->arr == NULL)
 		{
 			return ERROR_DINARR_ALLOCATION;

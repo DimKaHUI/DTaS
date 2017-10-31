@@ -15,7 +15,7 @@ int liststack_add(ListUnit** stack, int a)
 	if (size >= STAK_LIST_MAXSIZE)
 		return ERROR_STACK_LIST_OVERFLOW;
 
-	printf("\nSize: %d\n", size);
+	//printf("\nSize: %d\n", size);
 	if (liststack_is_empty(stack))
 	{
 		*stack = malloc(sizeof(ListUnit));
