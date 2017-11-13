@@ -28,7 +28,6 @@ int aqremove(aqueue* queue, float *res)
 	*res = *queue->pout;
 	*queue->pout = 0;
 	queue->pout++;
-	\
 	if (queue->pout > queue->data + queue->size - 1)
 	{
 		queue->pout = queue->data;
@@ -76,8 +75,14 @@ int lqadd(lqueue* queue, float x)
 
 int lqremove(lqueue* queue, float *result)
 {
+	//printf("Try to remove... ");
 	if (queue->pout == NULL)
+	{
+		//printf("ERROR! \n");
 		return ERROR_LQ_EMPTY;
+	}
+
+	//printf("Removed: %f\n", queue->pout->value);
 	*result = queue->pout->value;
 	lunit *next = queue->pout->next;
 	//if (queue->pout != NULL)
