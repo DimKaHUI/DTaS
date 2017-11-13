@@ -33,4 +33,4 @@ int aqcreate(aqueue *queue, int size);
 
 int lqadd(lqueue *queue, float x);
 int lqremove(lqueue *queue, float *result);
-lqueue lqcreate(lqueue *queue);
+void lqcreate(lqueue *queue);

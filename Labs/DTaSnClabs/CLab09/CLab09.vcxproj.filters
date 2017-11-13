@@ -15,21 +15,15 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="queue.c">
+    <ClCompile Include="main.c">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
-    <ClCompile Include="servdev.c">
-      <Filter>Файлы исходного кода</Filter>
-    </ClCompile>
-    <ClCompile Include="main_dev.c">
+    <ClCompile Include="mystring.c">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="queue.h">
-      <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="servdev.h">
+    <ClInclude Include="mystring.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
   </ItemGroup>

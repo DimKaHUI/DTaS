@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "queue.h"
+#include <stdio.h>
 
 int aqadd(aqueue* queue, float x)
 {
@@ -45,11 +46,14 @@ int aqcreate(aqueue* queue, int size)
 	queue->pin = queue->pout = queue->data;
 	queue->size = size;
 	queue->count = 0;
+	return 0;
 }
 
 int lqadd(lqueue* queue, float x)
 {
-	lunit *unit = malloc(sizeof(lunit));
+	//printf("Size: %d\n", sizeof(lunit));
+	lunit *unit = malloc(8);
+	
 	if (unit == NULL)
 	{
 		return ERROR_ALLOCATION;
@@ -76,12 +80,13 @@ int lqremove(lqueue* queue, float *result)
 		return ERROR_LQ_EMPTY;
 	*result = queue->pout->value;
 	lunit *next = queue->pout->next;
+	//if (queue->pout != NULL)
 	free(queue->pout);
 	queue->pout = next;
 	return 0;
 }
 
-lqueue lqcreate(lqueue* queue)
+void lqcreate(lqueue* queue)
 {
 	queue->pin = NULL;
 	queue->pout = NULL;
