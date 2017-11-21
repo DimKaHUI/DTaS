@@ -66,11 +66,9 @@
   <ItemGroup>
     <ClCompile Include="main_dev.c" />
     <ClCompile Include="queue.c" />
-    <ClCompile Include="servdev.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="queue.h" />
-    <ClInclude Include="servdev.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
