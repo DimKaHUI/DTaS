@@ -27,10 +27,10 @@ typedef struct lqueue
 	lunit *pout;
 } lqueue;
 
-int aqadd(aqueue *queue, float x);
-int aqremove(aqueue *queue, float *res);
-int aqcreate(aqueue *queue, int size);
+int aqadd(aqueue *queue, float x); // Добавление элемента в очередь
+int aqremove(aqueue *queue, float *res); // Удаление элемента из очереди
+int aqcreate(aqueue *queue, int size); // Инициализация очереди
 
-int lqadd(lqueue *queue, float x);
-int lqremove(lqueue *queue, float *result);
-void lqcreate(lqueue *queue);
+int lqadd(lqueue *queue, float x); // Добавление элемента в очередь
+int lqremove(lqueue *queue, float *result); // Удаление элемента из очереди
+void lqcreate(lqueue *queue); // Инициализация очереди
