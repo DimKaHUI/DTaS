@@ -3,6 +3,8 @@
 #include "queue.h"
 #include <stdio.h>
 
+size_t lunit_size;
+
 int aqadd(aqueue* queue, float x)
 {
 	if (queue->count > queue->size)
@@ -22,10 +24,13 @@ int aqadd(aqueue* queue, float x)
 int aqremove(aqueue* queue, float *res)
 {
 	if (queue->count <= 0)
+	{
 		return ERROR_AQ_EMPTY;
+	}
 
 	queue->count--;
-	*res = *queue->pout;
+	if (res != NULL)
+		*res = *queue->pout;
 	*queue->pout = 0;
 	queue->pout++;
 	if (queue->pout > queue->data + queue->size - 1)
@@ -49,45 +54,47 @@ int aqcreate(aqueue* queue, int size)
 }
 
 int lqadd(lqueue* queue, float x)
-{
-	//printf("Size: %d\n", sizeof(lunit));
-	lunit *unit = malloc(8);
-	
-	if (unit == NULL)
-	{
-		return ERROR_ALLOCATION;
-	}
-	unit->next = NULL;
-	unit->value = x;
-	if (queue->pin != NULL)
-	{
-		queue->pin->next = unit;
-		queue->pin = unit;		
+{	
+	if (queue->pin == NULL)
+	{		
+		queue->pin = malloc(lunit_size);
+		queue->pout = queue->pin;
 	}
 	else
 	{
-		queue->pin = unit;
-		queue->pout = unit;
+		queue->pin->next = malloc(lunit_size);
+		queue->pin = queue->pin->next;
 	}
-	
+
+	if (queue->pin == NULL)
+		return ERROR_ALLOCATION;
+
+	queue->pin->next = NULL;
+	queue->pin->value = x;
+
 	return 0;
 }
 
-int lqremove(lqueue* queue, float *result)
+int lqremove(lqueue* queue, float *res)
 {
-	//printf("Try to remove... ");
 	if (queue->pout == NULL)
 	{
-		//printf("ERROR! \n");
 		return ERROR_LQ_EMPTY;
 	}
 
-	//printf("Removed: %f\n", queue->pout->value);
-	*result = queue->pout->value;
-	lunit *next = queue->pout->next;
-	//if (queue->pout != NULL)
+	//if (queue->pout->value != NULL)
+	if (res != NULL)
+	{
+
+		lunit *u = queue->pout;
+		*res = u->value;
+	}
+
+	lunit *npout = queue->pout->next;
 	free(queue->pout);
-	queue->pout = next;
+	queue->pout = npout;
+	if (npout == NULL)
+		queue->pin = NULL;
 	return 0;
 }
 
@@ -95,4 +102,7 @@ void lqcreate(lqueue* queue)
 {
 	queue->pin = NULL;
 	queue->pout = NULL;
+	lunit_size = sizeof(lunit);
 }
+
+
