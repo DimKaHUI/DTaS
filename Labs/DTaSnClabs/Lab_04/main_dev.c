@@ -5,16 +5,16 @@
 #include "queue.h"
 
 #define TICK_TIME 0.1f
-#define T1_ADD_MIN 1
-#define T1_ADD_MAX 5
-#define T2_ADD_MIN 0
-#define T2_ADD_MAX 3
-#define T1_SERVING_MIN 0
-#define T1_SERVING_MAX 4
-#define T2_SERVING_MIN 0
-#define T2_SERVING_MAX 1
+#define T1_ADD_MIN 1.0f
+#define T1_ADD_MAX 5.0f
+#define T2_ADD_MIN 0.0f
+#define T2_ADD_MAX 3.0f
+#define T1_SERVING_MIN 0.0f
+#define T1_SERVING_MAX 4.0f
+#define T2_SERVING_MIN 0.0f
+#define T2_SERVING_MAX 1.0f
 
-#define RAND(min, max)  (rand() / RAND_MAX) * (max - min) + min
+#define RAND(t1, t2)  ((float)rand() / RAND_MAX) * (t2 - t1) + t1
 
 void ProcessList();
 
@@ -24,6 +24,7 @@ int lqlen(lqueue *lq)
 	lunit *u = lq->pout;
 	while (u != NULL)
 	{
+		u = u->next;
 		len++;
 	}
 	return len;
@@ -61,11 +62,24 @@ void ProcessList()
 	while (out1 < 1000)
 	{
 		total_time += TICK_TIME;
+		//printf("Total time: %3.2f\n", total_time);
 
 		// Info
-		if (out1 % 100 == 0 && out1 != 0)
+		if (out1 % 100 == 0 && out1 != 0 && out1 / 100 == cur_info + 1)
 		{
-			printf("");
+			cur_info++;
+			int len1 = lqlen(&queue1);
+			int len2 = lqlen(&queue2);
+			total_length1 += len1;
+			total_length2 += len2;
+			printf("==================================\n");
+			printf("Queue 1 length: %d\n", len1);
+			printf("Queue 2 length: %d\n", len2);
+			printf("Queue 1 average length: %3.2f\n", (float)total_length1 / cur_info);
+			printf("Queue 2 average length: %3.2f\n", (float)total_length2 / cur_info);
+			printf("Type 1 average time: %3.2f\n", -1.0f);
+			printf("Type 2 average time: %3.2f\n", -1.0f);
+			printf("==================================\n");
 		}
 
 		// Process
@@ -83,12 +97,11 @@ void ProcessList()
 				state = 0;
 			}
 		}
-		else
-			standing_time += TICK_TIME;
 
 		// Get
 		else if (state == 0)
 		{
+			standing_time += TICK_TIME;
 			int type1 = lqremove(&queue1, NULL);
 			int type2 = 0;
 			if (type1)
