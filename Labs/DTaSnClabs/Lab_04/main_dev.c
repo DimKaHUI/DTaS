@@ -62,6 +62,8 @@ void ProcessList()
 	while (out1 < 1000)
 	{
 		total_time += TICK_TIME;
+		if (state == 0)
+			standing_time += TICK_TIME;
 		//printf("Total time: %3.2f\n", total_time);
 
 		// Info
@@ -101,7 +103,6 @@ void ProcessList()
 		// Get
 		else if (state == 0)
 		{
-			standing_time += TICK_TIME;
 			int type1 = lqremove(&queue1, NULL);
 			int type2 = 0;
 			if (type1)
@@ -152,4 +153,7 @@ void ProcessList()
 	}
 
 	printf("Success!\nTotal time: %3.2f\nStanding time: %3.2f\nIn1: %d, Out1: %d\nIn2: %d, Out2: %d\n", total_time, standing_time, in1, out1, in2, out2);
+	printf("Ignored apps type 2: %d\n", in2 - out2);
+	printf("Average time of type 1: %3.2f\n", (1 + (float)total_length1 / cur_info / 2) * (float)(T1_SERVING_MAX - T1_ADD_MIN) / 2);
+	printf("Average time of type 2: %3.2f\n", (1 + (float)total_length2 / cur_info / 2) * (float)(T2_SERVING_MAX - T2_ADD_MIN) / 2);
 }
