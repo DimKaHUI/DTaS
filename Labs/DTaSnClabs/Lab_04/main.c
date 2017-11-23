@@ -47,6 +47,57 @@ int lqlen(lqueue *lq)
 
 void ProcessList()
 {
+	float a1_min, a1_max, a2_min, a2_max, p1_min, p1_max, p2_min, p2_max;
+	printf("Input times of adding and processing: (type any non-numeric symbol to set defaults)\n");
+	printf("Type 1 adding min: ");
+	if (scanf("%f", &a1_min) != 1)
+	{
+		a1_min = T1_ADD_MIN;
+	}
+	fflush(stdin);
+	printf("Type 1 adding max: ");
+	if (scanf("%f", &a1_max) != 1)
+	{
+		a1_max = T1_ADD_MAX;
+	}
+	fflush(stdin);
+	printf("Type 2 adding min: ");
+	if (scanf("%f", &a2_min) != 1)
+	{
+		a2_min = T2_ADD_MIN;
+	}
+	fflush(stdin);
+	printf("Type 2 adding max: ");
+	if (scanf("%f", &a2_max) != 1)
+	{
+		a2_max = T2_ADD_MAX;
+	}
+	fflush(stdin);
+	printf("Type 1 process min: ");
+	if (scanf("%f", &p1_min) != 1)
+	{
+		p1_min = T1_SERVING_MIN;
+	}
+	fflush(stdin);
+	printf("Type 1 process max: ");
+	if (scanf("%f", &p1_max) != 1)
+	{
+		p1_max = T1_SERVING_MAX;
+	}
+	fflush(stdin);
+	printf("Type 2 process min: ");
+	if (scanf("%f", &p2_min) != 1)
+	{
+		p2_min = T2_SERVING_MIN;
+	}
+	fflush(stdin);
+	printf("Type 2 process max: ");
+	if (scanf("%f", &p2_max) != 1)
+	{
+		p2_max = T2_SERVING_MAX;
+	}	
+	fflush(stdin);
+
 	lqueue queue1;
 	lqueue queue2;
 	lqcreate(&queue1);
@@ -69,7 +120,7 @@ void ProcessList()
 	while (out1 < 1000)
 	{
 		total_time += TICK_TIME;
-		if (state == 0)
+		if (state != 1)
 			standing_time += TICK_TIME;
 		//printf("Total time: %3.2f\n", total_time);
 
@@ -85,9 +136,6 @@ void ProcessList()
 			printf("Queue 1 length: %d\n", len1);
 			printf("Queue 2 length: %d\n", len2);
 			printf("Queue 1 average length: %3.2f\n", (float)total_length1 / cur_info);
-			printf("Queue 2 average length: %3.2f\n", (float)total_length2 / cur_info);
-			printf("Type 1 average time: %3.2f\n", -1.0f);
-			printf("Type 2 average time: %3.2f\n", -1.0f);
 			printf("==================================\n");
 		}
 
@@ -118,13 +166,13 @@ void ProcessList()
 				if (!type2)
 				{
 					state = 2;
-					process_time = RAND(T2_SERVING_MIN, T2_SERVING_MAX);
+					process_time = RAND(p2_min, p2_max);
 				}
 			}
 			else
 			{
 				state = 1;
-				process_time = RAND(T1_SERVING_MIN, T1_SERVING_MAX);
+				process_time = RAND(p1_min, p1_max);
 			}
 		}
 
@@ -134,7 +182,7 @@ void ProcessList()
 			if (!type1)
 			{
 				state = 1;
-				process_time = RAND(T1_SERVING_MIN, T1_SERVING_MAX);
+				process_time = RAND(p1_min, p1_max);
 				lqadd(&queue2, 0);
 			}
 		}
@@ -146,7 +194,7 @@ void ProcessList()
 		{
 			lqadd(&queue1, 1); // TODO error check
 			in1++;
-			add_time1 = RAND(T1_ADD_MIN, T1_ADD_MAX);
+			add_time1 = RAND(a1_min, a1_max);
 		}
 
 		if (add_time2 > 0)
@@ -155,14 +203,20 @@ void ProcessList()
 		{
 			lqadd(&queue2, 2); // TODO error check
 			in2++;
-			add_time2 = RAND(T2_ADD_MIN, T2_ADD_MAX);
+			add_time2 = RAND(a2_min, a2_max);
 		}
 	}
 
 	printf("Success!\nTotal time: %3.2f\nStanding time: %3.2f\nIn1: %d, Out1: %d\nIn2: %d, Out2: %d\n", total_time, standing_time, in1, out1, in2, out2);
 	printf("Ignored apps type 2: %d\n", in2 - out2);
-	printf("Average time of type 1: %3.2f\n", (1 + (float)total_length1 / cur_info / 2) * (float)(T1_SERVING_MAX - T1_ADD_MIN) / 2);
-	printf("Average time of type 2: %3.2f\n", (1 + (float)total_length2 / cur_info / 2) * (float)(T2_SERVING_MAX - T2_ADD_MIN) / 2);
+	printf("Average time of type 1: %3.2f\n", (1 + (float)total_length1 / cur_info / 2) * (float)(p1_max - p1_min) / 2);
+	printf("Average time of type 2: %3.2f\n", (1 + (float)total_length2 / cur_info / 2) * (float)(p2_max - p2_min) / 2);
+
+	printf("Accuracy: \n");	
+	int app_theoretical = (p1_max - p1_min) / 2;
+	int p1_served_theoretical = (total_time - standing_time) / app_theoretical;
+
+	printf("Input error: %3.6f\n", 100 * ((total_time - standing_time) / (p2_max - p1_min) * 2));
 }
 
 int main()
@@ -326,10 +380,16 @@ int main()
 			printf("List adding time: %llu\n", list_add);
 			printf("List removing time: %llu\n", list_remove);
 			
-			printf("Ratios (array to list): \n");
+			printf("\nRatios (array to list): \n");
 			printf("  Initializing: %10.10f\n", (double)array_init / (double)list_init);
 			printf("        Adding: %10.10f\n", (double)array_add / (double)list_add);
 			printf("      Removing: %10.10f\n", (double)array_remove / (double)list_remove);
+
+			int size_arr = sizeof(aqueue)+sizeof(float)* (ARRAY_SIZE_ANALIZE - 1);
+			int size_list = sizeof(lqueue)+sizeof(lunit)* (ARRAY_SIZE_ANALIZE);
+			printf("\nSize of array-based queue (size = %d): %d\n", ARRAY_SIZE_ANALIZE, size_arr);
+			printf("\nSize of list-based queue (size = %d): %d\n", ARRAY_SIZE_ANALIZE, size_list);
+			printf("\nMemory ratio (array to list): %6.6f\n", (float)size_arr / (float)size_list);
 		}
 		else
 			err = ERROR_UNRECOGNIZED_COMMAND;
