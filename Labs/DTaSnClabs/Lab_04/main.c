@@ -45,6 +45,23 @@ int lqlen(lqueue *lq)
 	return len;
 }
 
+void lqaddreses(lqueue *q)
+{
+	lunit *u = q->pout;
+	int i = 1;
+	int prev = 0;
+	while (u != NULL)
+	{
+		if (prev != 0)
+			printf("Distance: %lld\n", (unsigned long long)u - prev);
+		printf("%2.2d : %p\n", i, u);	
+		prev = (unsigned long long)u;
+		u = u->next;
+		i++;
+	}
+	printf("\n");
+}
+
 void ProcessList()
 {
 	float a1_min, a1_max, a2_min, a2_max, p1_min, p1_max, p2_min, p2_max;
@@ -232,6 +249,7 @@ int main()
 	printf("7. Print list\n");
 	printf("8. Start Processing Device simulation\n");
 	printf("9. Analize times and memory\n");
+	printf("10. Fragmentation analizes\n");
 
 	aqueue q;
 	aqcreate(&q, ARRAY_SIZE);
@@ -390,6 +408,31 @@ int main()
 			printf("\nSize of array-based queue (size = %d): %d\n", ARRAY_SIZE_ANALIZE, size_arr);
 			printf("\nSize of list-based queue (size = %d): %d\n", ARRAY_SIZE_ANALIZE, size_list);
 			printf("\nMemory ratio (array to list): %6.6f\n", (float)size_arr / (float)size_list);
+		}
+		else if (command == 10)
+		{
+			lqueue queue;
+			lqcreate(&queue);
+			for (int i = 0; i < 6; i++)
+			{
+				lqadd(&queue, i);
+			}
+			printf("Current element addresses: \n");
+			lqaddreses(&queue);
+			printf("Removing half of elements\n");
+			for (int i = 0; i < 3; i++)
+			{
+				lqremove(&queue, NULL);
+			}
+			printf("Element addresses after removing: \n");
+			lqaddreses(&queue);
+			printf("Returning the elements\n");
+			for (int i = 0; i < 3; i++)
+			{
+				lqadd(&queue, i);
+			}
+			printf("Element addresses after returning: \n");
+			lqaddreses(&queue);
 		}
 		else
 			err = ERROR_UNRECOGNIZED_COMMAND;
