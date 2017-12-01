@@ -24,7 +24,7 @@
 #define T2_SERVING_MIN 0.0f
 #define T2_SERVING_MAX 1.0f
 
-#define RAND(t1, t2)  ((float)rand() / RAND_MAX) * (t2 - t1) + t1
+#define RAND(t1, t2)  ((double)rand() / RAND_MAX) * (t2 - t1) + t1
 
 
 #pragma intrinsic(__rdtsc)
@@ -90,25 +90,25 @@ void ProcessList()
 		a2_max = T2_ADD_MAX;
 	}
 	fflush(stdin);
-	printf("Type 1 process min: ");
+	printf("Type 1 serving min: ");
 	if (scanf("%f", &p1_min) != 1)
 	{
 		p1_min = T1_SERVING_MIN;
 	}
 	fflush(stdin);
-	printf("Type 1 process max: ");
+	printf("Type 1 serving max: ");
 	if (scanf("%f", &p1_max) != 1)
 	{
 		p1_max = T1_SERVING_MAX;
 	}
 	fflush(stdin);
-	printf("Type 2 process min: ");
+	printf("Type 2 serving min: ");
 	if (scanf("%f", &p2_min) != 1)
 	{
 		p2_min = T2_SERVING_MIN;
 	}
 	fflush(stdin);
-	printf("Type 2 process max: ");
+	printf("Type 2 serving max: ");
 	if (scanf("%f", &p2_max) != 1)
 	{
 		p2_max = T2_SERVING_MAX;
@@ -230,10 +230,16 @@ void ProcessList()
 	printf("Average time of type 2: %3.2f\n", (1 + (float)total_length2 / cur_info / 2) * (float)(p2_max - p2_min) / 2);
 
 	printf("Accuracy: \n");	
-	int app_theoretical = (p1_max - p1_min) / 2;
-	int p1_served_theoretical = (total_time - standing_time) / app_theoretical;
-
-	printf("Input error: %3.6f\n", 100 * ((total_time - standing_time) / (p2_max - p1_min) * 2));
+	// Output
+	
+	int apps_theoretical = (total_time - standing_time) / ((p1_max + p1_min) / 2);
+	int delta = apps_theoretical - out2; // in1
+	printf("Output accuracy is %2.2f\n", 100.0f * delta / in1);
+	float come_ave1 = (a1_max + a1_min) / 2;
+	float summ_come = come_ave1 * 1000;
+	//printf("a1_max: %2.2f, a2_max: %2.2f, Summ come: %2.2f\n", a1_max, a1_min, summ_come);
+	printf("Input accuracy is %2.2f\n", 100.0f * (total_time - summ_come) / summ_come);
+	
 }
 
 int main()
