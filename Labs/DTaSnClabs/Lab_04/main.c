@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <intrin.h>
+#include <math.h>
 #include "queue.h"
 
 #define ERROR_UNRECOGNIZED_COMMAND -1111
@@ -14,17 +15,18 @@
 #define ARRAY_SIZE_ANALIZE 1000
 
 // Simulation prefs
-#define TICK_TIME 0.1f
+#define TICK_TIME 0.01f
 #define T1_ADD_MIN 1.0f
 #define T1_ADD_MAX 5.0f
 #define T2_ADD_MIN 0.0f
 #define T2_ADD_MAX 3.0f
 #define T1_SERVING_MIN 0.0f
 #define T1_SERVING_MAX 4.0f
+//#define T1_SERVING_MAX 1.0f
 #define T2_SERVING_MIN 0.0f
 #define T2_SERVING_MAX 1.0f
 
-#define RAND(t1, t2)  ((double)rand() / RAND_MAX) * (t2 - t1) + t1
+#define RAND(t1, t2)  ((float)rand() / RAND_MAX) * (t2 - t1) + t1
 
 
 #pragma intrinsic(__rdtsc)
@@ -129,6 +131,7 @@ void ProcessList()
 	int out2 = 0;
 	int in1 = 0;
 	int in2 = 0;
+	int skipped = 0;
 	int state = 0;
 	int total_length1 = 0;
 	int total_length2 = 0;
@@ -136,10 +139,8 @@ void ProcessList()
 
 	while (out1 < 1000)
 	{
-		total_time += TICK_TIME;
-		if (state != 1)
+		if (state != 1) // != 1
 			standing_time += TICK_TIME;
-		//printf("Total time: %3.2f\n", total_time);
 
 		// Info
 		if (out1 % 100 == 0 && out1 != 0 && out1 / 100 == cur_info + 1)
@@ -153,55 +154,8 @@ void ProcessList()
 			printf("Queue 1 length: %d\n", len1);
 			printf("Queue 2 length: %d\n", len2);
 			printf("Queue 1 average length: %3.2f\n", (float)total_length1 / cur_info);
+			printf("Queue 2 average length: %3.2f\n", (float)total_length2 / cur_info);
 			printf("==================================\n");
-		}
-
-		// Process
-		if (state != 0)
-		{
-			if (process_time > 0)
-				process_time -= TICK_TIME;
-			else
-			{
-				process_time = 0;
-				if (state == 1)
-					out1++;
-				else
-					out2++;
-				state = 0;
-			}
-		}
-
-		// Get
-		else if (state == 0)
-		{
-			int type1 = lqremove(&queue1, NULL);
-			int type2 = 0;
-			if (type1)
-			{
-				type2 = lqremove(&queue2, NULL);
-				if (!type2)
-				{
-					state = 2;
-					process_time = RAND(p2_min, p2_max);
-				}
-			}
-			else
-			{
-				state = 1;
-				process_time = RAND(p1_min, p1_max);
-			}
-		}
-
-		else
-		{
-			int type1 = lqremove(&queue1, NULL);
-			if (!type1)
-			{
-				state = 1;
-				process_time = RAND(p1_min, p1_max);
-				lqadd(&queue2, 0);
-			}
 		}
 
 		// Add
@@ -212,6 +166,7 @@ void ProcessList()
 			lqadd(&queue1, 1); // TODO error check
 			in1++;
 			add_time1 = RAND(a1_min, a1_max);
+			//add_time1 = 3.0f;
 		}
 
 		if (add_time2 > 0)
@@ -222,23 +177,78 @@ void ProcessList()
 			in2++;
 			add_time2 = RAND(a2_min, a2_max);
 		}
+
+		// Process
+		if (process_time > 0)
+		{
+			process_time -= TICK_TIME;
+		}
+		if (state == 1 && process_time <= 0)
+		{
+			out1++;
+			state = 0;
+		}
+		if (state == 2 && process_time <= 0)
+		{
+			out2++;
+			state = 0;
+		}
+
+		// Get
+		if (state == 0)
+		{
+			int type1 = lqremove(&queue1, NULL); // If success, type1 will be 0
+			//int type2;
+			if (type1 != 0)                      // If error occured while getting type1
+			{
+				int type2 = lqremove(&queue2, NULL);
+				if (type2 == 0)
+				{
+					state = 2;
+					process_time = RAND(p2_min, p2_max);
+				}
+			}
+			else
+			{
+				state = 1;
+				process_time = RAND(p1_min, p1_max);
+				//process_time = 2.0f;
+			}
+		}
+		else if (state == 2)
+		{
+			int type1 = lqremove(&queue1, NULL);
+			if (type1 == 0)
+			{
+				state = 1;
+				process_time = RAND(p1_min, p1_max);
+				//out1_avtime += process_time; // TEST
+				lqadd(&queue2, 0);
+				skipped++;
+			}
+		}
+
+		total_time += TICK_TIME; // Incrementation of working time
 	}
 
+	//printf("Out1_avtime: %3.2f, Ad1_avtime: %3.2f\n", out1_avtime / out1, add1_avtime / in1);
+
 	printf("Success!\nTotal time: %3.2f\nStanding time: %3.2f\nIn1: %d, Out1: %d\nIn2: %d, Out2: %d\n", total_time, standing_time, in1, out1, in2, out2);
-	printf("Ignored apps type 2: %d\n", in2 - out2);
+	printf("Ignored apps type 2: %d\n", skipped);
 	printf("Average time of type 1: %3.2f\n", (1 + (float)total_length1 / cur_info / 2) * (float)(p1_max - p1_min) / 2);
 	printf("Average time of type 2: %3.2f\n", (1 + (float)total_length2 / cur_info / 2) * (float)(p2_max - p2_min) / 2);
 
 	printf("Accuracy: \n");	
 	// Output
 	
-	int apps_theoretical = (total_time - standing_time) / ((p1_max + p1_min) / 2);
-	int delta = apps_theoretical - out2; // in1
-	printf("Output accuracy is %2.2f\n", 100.0f * delta / in1);
-	float come_ave1 = (a1_max + a1_min) / 2;
-	float summ_come = come_ave1 * 1000;
-	//printf("a1_max: %2.2f, a2_max: %2.2f, Summ come: %2.2f\n", a1_max, a1_min, summ_come);
-	printf("Input accuracy is %2.2f\n", 100.0f * (total_time - summ_come) / summ_come);
+	float out_apps_theoretical = (total_time - standing_time) / ((p1_max + p1_min) / 2);
+	float delta = fabs(out_apps_theoretical - out1);     // Delta between real and theoretical outcome
+	printf("Outcome accuracy is %2.2f\n", 100.0f * delta / in1);
+
+	float time_come_ave1 = (a1_max + a1_min) / 2;      // Среднее время прихода заявки
+	float summ_come = (total_time / time_come_ave1);   // Теоретическое количество вошедших заявок
+	delta = fabs(in1 - summ_come);                     // Delta between real and theoretical income
+	printf("Income accuracy is %2.2f\n", 100.0f * delta / summ_come);
 	
 }
 
@@ -363,8 +373,8 @@ int main()
 				rem = tick() - rem;
 				array_remove += rem;
 			}
-			array_add /= REPEATS_COUNT;
-			array_remove /= REPEATS_COUNT;
+			//array_add /= REPEATS_COUNT;
+			//array_remove /= REPEATS_COUNT;
 
 			// Checking list
 			unsigned long long  list_add = 0;
