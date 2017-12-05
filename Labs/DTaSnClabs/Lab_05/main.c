@@ -1,8 +1,10 @@
 #define _CRT_SECURE_NO_WARNINGS
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "sparsematrix.h"
 #include <conio.h>
+#include <time.h>
 
 #define SIZE_X 1000
 #define SIZE_Y 1000
@@ -12,6 +14,7 @@
 
 int main(void)
 {
+	srand(time(NULL));
 	int command;
 	int err = 0;
 	printf("1. Summ of random matrixes %d x %d\n", SIZE_X, SIZE_Y);
@@ -71,12 +74,53 @@ int main(void)
 			else
 			{				
 				matrix a = mrandom(rows, cols, conc);
+				matrix b = mrandom(rows, cols, conc);
+				printf("First: \n");
 				print_matrix(&a);
+				printf("Second: \n");
+				print_matrix(&b);
+				smatrix sa, sb;
+				m2s(&a, &sa);
+				m2s(&b, &sb);
+				ssumm(&sa, &sb);
+				printf("Result: \n");
+				print_sparse(&sa);
+				print_sparse_structure(&sa);
 			}
 		}
 		else if (command == 2)
 		{
+			printf("Input matrix rows and cols, splitting with space: ");
+			ulong rows, cols;
+			if (scanf("%llu %llu", &rows, &cols) != 2)
+			{
+				err = ERROR_ILLEGAL_SYMBOL;
+			}
+			else
+			{
+				printf("Inputting first matrix: \n");
+				matrix a = {.rows = rows, .cols = cols};
+				read_matrix(&a);
+				printf("\nFirst matrix: \n");
+				print_matrix(&a);
+				printf("\nInputting second matrix: \n");
+				matrix b = { .rows = rows, .cols = cols };
+				read_matrix(&b);
+				printf("\nSecond matrix: \n");
+				print_matrix(&b);
+				smatrix sa, sb;
+				m2s(&a, &sa);
+				m2s(&b, &sb);
 
+				printf("\nInsides: \n");
+				print_sparse_structure(&sa);
+
+				ssumm(&sa, &sb);
+				printf("\nResult: \n");
+				print_sparse(&sa);
+				printf("\nInsides: \n");
+				print_sparse_structure(&sa);
+			}
 		}
 		else
 			err = ERROR_UNKNOWN_CMD;
