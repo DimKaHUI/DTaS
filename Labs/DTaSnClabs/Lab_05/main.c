@@ -24,7 +24,7 @@ int main(void)
 	srand(time(NULL));
 	int command;
 	int err = 0;
-	printf("1. Summ of random matrixes %d x %d\n", SIZE_X, SIZE_Y);
+	printf("1. Summ of random matrixes\n");
 	printf("2. Summ of manually created matrixes\n");
 	printf("3. Test convertion");
 	
@@ -93,9 +93,9 @@ int main(void)
 				smatrix sa, sb;
 				m2s(&a, &sa);
 				m2s(&b, &sb);
-				ulong time_simple = tick();
+				ulong time_sparse = tick();
 				ssumm(&sa, &sb);
-				time_simple = tick() - time_simple;
+				time_sparse = tick() - time_sparse;
 				if (flag)
 				{
 					printf("\nResult: \n");
@@ -103,24 +103,13 @@ int main(void)
 					printf("\nInsides: \n");
 					print_sparse_structure(&sa);
 				}
-				ulong time_sparse = tick();
+				ulong time_simple = tick();
 				msumm(&a, &b);
-				time_sparse = tick() - time_sparse;
+				time_simple = tick() - time_simple;
 				if (flag)
 				{
 					printf("\nResult simple: \n");
 					print_matrix(&a);
-				}
-
-				matrix result;
-				s2m(&sa, &result);
-				if (mequal(&a, &result))
-				{
-					printf("\nRESULTS ARE EQUAL!\n");
-				}
-				else
-				{
-					printf("\nRESULTS ARE NOT EQUAL!\n");
 				}
 
 				printf("Time of simple summ: %llu\n",  time_simple);

@@ -128,7 +128,10 @@ int mequal(const matrix* a, const matrix* b)
 	for (ulong i = 0; i < a->rows; i++)
 	for (ulong j = 0; j < a->cols; j++)
 	if (a->data[i][j] != b->data[i][j])
+	{
+		//printf("Comparison failed on checking (%llu, %llu): %3.2f ~ %3.2f\n", i, j, a->data[i][j], b->data[i][j]);
 		return 0;
+	}
 	return 1;
 }
 
