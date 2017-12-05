@@ -82,7 +82,7 @@ void print_matrix(const matrix* m)
 	{
 		for (ulong j = 0; j < m->cols; j++)
 		{
-			if (m->data[i][j] != 0)
+			if (fabs(m->data[i][j]) > EPS)
 				printf("%+3.2f ", m->data[i][j]);
 			else
 				printf("##### ");
@@ -117,6 +117,19 @@ matrix mrandom(ulong x, ulong y, float concentration)
 			a.data[i][j] = 0;
 	}
 	return a;
+}
+
+int mequal(const matrix* a, const matrix* b)
+{
+	if (a->rows != b->rows)
+		return 0;
+	if (a->cols != b->cols)
+		return 0;
+	for (ulong i = 0; i < a->rows; i++)
+	for (ulong j = 0; j < a->cols; j++)
+	if (a->data[i][j] != b->data[i][j])
+		return 0;
+	return 1;
 }
 
 void m2s(const matrix* m, smatrix* s)
@@ -172,13 +185,34 @@ void m2s(const matrix* m, smatrix* s)
 	s->a_len = count;
 }
 
+int s2m(const smatrix* s, matrix* m)
+{
+	m->data = malloc(sizeof(float*)* s->rows);
+	if (m->data == NULL)
+		return ERROR_ALLOCATION;
+	for (ulong i = 0; i < s->rows; i++)
+	{
+		m->data[i] = malloc(sizeof(float)* s->cols);
+		if (m->data[i] == NULL)
+			return ERROR_ALLOCATION;
+	}
+	for (ulong i = 0; i < s->rows; i++)
+	for (ulong j = 0; j < s->cols; j++)
+	{
+		m->data[i][j] = mget(s, i, j);
+	}
+	m->rows = s->rows;
+	m->cols = s->cols;
+	return 0;
+}
+
 void print_sparse(const smatrix* m)
 {
 	for (ulong i = 0; i < m->rows; i++)
 	{
 		for (ulong j = 0; j < m->cols; j++)
 		{
-			if (mget(m, i, j) != 0)
+			if (fabs(mget(m, i, j)) > EPS)
 				printf("%+3.2f ", mget(m, i, j));
 			else
 				printf("##### ");
@@ -213,6 +247,7 @@ void print_sparse_structure(const smatrix* m)
 	printf("\nLI: ");
 	for (ulong i = 0; i < m->rows + 1; i++)
 		printf("%4.4llu ", m->LI[i]);
+	printf("\n");
 }
 
 void free_sparce(smatrix* a)
@@ -241,13 +276,13 @@ ulong getcol(const smatrix *s, ulong index)
 void printaf(float* arr, ulong n)
 {
 	for (ulong i = 0; i < n; i++)
-		printf("%3.2f ", arr[i]);
+		printf("%+3.2f ", arr[i]);
 	printf("\n");
 }
 void printal(ulong* arr, ulong n)
 {
 	for (ulong i = 0; i < n; i++)
-		printf("%llu ", arr[i]);
+		printf("%5.1llu ", arr[i]);
 	printf("\n");
 }
 
@@ -257,62 +292,56 @@ int ssumm(smatrix* a, const smatrix* b)
 	{
 		ulong row = getrow(a, i);
 		ulong col = getcol(a, i);
-		printf("Row: %llu, Col: %llu\n", row + 1, col + 1);
 		float bval = mget(b, row, col);
 		a->A[i] += bval;
 		
 		if (fabs(a->A[i]) <= EPS) //Is zero now
 		{
-			printaf(a->A, a->a_len);
 			for (ulong k = i; k < a->a_len; k++)
 			{
 				a->A[k] = a->A[k + 1];
 				a->LJ[k] = a->LJ[k + 1];
-			}
+			}			
 			a->a_len--;
-			printaf(a->A, a->a_len);
+			a->A = realloc(a->A, a->a_len * sizeof(float));
+			a->LJ = realloc(a->LJ, a->a_len * sizeof(ulong));
 			for (ulong k = row + 1; k <= a->rows; k++)
 				a->LI[k]--;
-
 			i--;
 		}
 	}
 	
-	/*for (ulong i = 0; i < b->a_len; i++)
+	for (ulong i = 0; i < b->a_len; i++)
 	{
 		ulong row = getrow(b, i);
 		ulong col = getcol(b, i);
 		float aval = mget(a, row, col);
-		if (aval == 0)
+		if (fabs(aval) <= EPS)
 		{
-			// Inserting element
-			ulong a_line_index = a->LI[row];
-			ulong a_next_line_index = a->LI[row + 1];
-			ulong insertion_pos = a_line_index;
-			for (; insertion_pos < a_next_line_index && a->LJ[insertion_pos] < col; insertion_pos++);
-			
-			if (a_line_index == a_next_line_index) // This line is full-zero
-			{
-				printf("Zero line!\n");
-			}
-			else // This line is not fully zero
-			{
-				// Shifting
-				a->a_len++;
-				a->A = realloc(a->A, a->a_len * sizeof(float));
-				a->LJ = realloc(a->LJ, a->a_len * sizeof(ulong));
-				for (ulong k = a->a_len - 1; k >= insertion_pos; k--)
-				{
-					a->A[k] = a->A[k - 1];
-					a->LJ[k] = a->LJ[k - 1];
-					if (k == 0)
-						break;
-				}
-				a->A[insertion_pos] = b->A[i];
-				a->LJ[insertion_pos] = b->A[i];
-			}
+			//print_sparse_structure(a);
+			ulong inspos = a->LI[row];
+			for (; a->LJ[inspos] < col && inspos < a->LI[row + 1]; inspos++);
+			//inspos--;
 
+			a->a_len++;
+			a->A = realloc(a->A, a->a_len * sizeof(float));
+			a->LJ = realloc(a->LJ, a->a_len * sizeof(ulong));
+			
+			for (ulong k = a->a_len - 1; k >= inspos; k--)
+			{
+				a->A[k] = a->A[k - 1];
+				a->LJ[k] = a->LJ[k - 1];
+				if (k == 0)
+					break;
+			}			
+
+			for (ulong k = row + 1; k <= a->rows; k++)
+				a->LI[k]++;
+			a->A[inspos] = b->A[i];
+			a->LJ[inspos] = col;
+
+			//print_sparse_structure(a);
 		}
-	}*/
-	
+	}
+	return 0;
 }
