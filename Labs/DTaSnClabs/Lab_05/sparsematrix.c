@@ -31,7 +31,7 @@ float mget(const smatrix* matrix, ulong line, ulong column)
 
 ulong getval(node_t* head, ulong ind)
 {
-	for (ulong i = 0; i < ind; i++)
+	for (ulong i = 0; i < ind && head; i++)
 	{
 		head = head->next;
 	}
