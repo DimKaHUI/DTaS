@@ -1,5 +1,7 @@
 #pragma once
 
+typedef unsigned long long ulong;
+
 enum operation_type
 {
 	summ, prod, diff, none
@@ -35,3 +37,4 @@ tnode *tree_add(tnode *root, tnode *node);
 void tree_remove(tnode** root, int k, tnode** removed);
 tnode *get(tnode *tree, int k);
 tnode *get_val(tnode *tree, void* value);
+void tsort(int *arr, ulong length);

@@ -5,12 +5,19 @@
 #include <math.h>
 #include <stdlib.h>
 #include <time.h>
+#include <intrin.h>
 
 #define EPS 0.001
 #define ERROR_ILLEGAL_SYMBOL -111
 #define ERROR_UNKNOWN_CMD -121
 
 #define RANDINT(min, max) min + rand() % max
+
+#pragma intrinsic(__rdtsc)
+unsigned __int64 tick()
+{
+	return __rdtsc();
+}
 
 
 tnode *get_double(tnode *tree, double value)
@@ -115,6 +122,17 @@ float calculate(tnode *n)
 	printf("Error!\n");
 	return 0;
 #endif
+}
+
+void arr_shuffle(int *arr, ulong length)
+{
+	for (ulong i = 0; i < length; i++)
+	{
+		ulong index = RANDINT(0, length);
+		int tmp = arr[i];
+		arr[i] = arr[index];
+		arr[index] = tmp;
+	}
 }
 
 int main(void)
@@ -268,6 +286,30 @@ int main(void)
 				else
 					printf("Value is %lf\n", *(double*)(res->data));
 			}
+		}
+		else if (cmd == 8)
+		{
+			err = 0;
+			printf("Sorting analize\n");
+			int arr1[] = { 100, 131, 159, 130, 40, 155, 134, 132, 150, 135, 157, 130, 136, 149 }; // ¬ысокое дерево с малой ветвистостью
+			int arr2[] = {92, 94, 90, 30, 44, 91, 100, 0, 89, 45, 88, 92, 95, 97};
+
+			ulong sorting1 = 0;
+			ulong sorting2 = 0;
+			for (int i = 0; i < 1000; i++)
+			{
+				arr_shuffle(arr1, 14);
+				arr_shuffle(arr2, 14);
+				ulong t = tick();
+				tsort(arr1, 14);
+				sorting1 += tick() - t;
+				t = tick();
+				tsort(arr2, 14);
+				sorting2 += tick() - t;
+			}
+			printf("Sorting of high tree with small amount of branches: %llu\n", sorting1);
+			printf("Sorting of high tree with good amount of branches: %llu\n", sorting2);
+			printf("Time ratio: %3.2lf\n", (double)sorting2 / (double)sorting1);
 		}
 		else
 			err = ERROR_UNKNOWN_CMD;

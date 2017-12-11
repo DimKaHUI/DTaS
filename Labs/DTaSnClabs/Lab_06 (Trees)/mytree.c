@@ -253,55 +253,6 @@ tnode *get_parent(tnode *tree, int k, int *side)
 	return NULL;
 }
 
-/*tnode* tree_remove(tnode* root, int key, tnode** removed)
-{
-	// Finding the parent of needed node
-	int side = 0; // -1 - left, 1 - right
-	tnode *parent = get_parent(root, key, &side);
-	if (parent == NULL)
-	{
-		printf("Parent not found!\n");
-		return root;
-	}
-	if (side == -1)
-		*removed = parent->left;
-	else
-		*removed = parent->right;
-	if ((*removed)->left == NULL && (*removed)->right == NULL)
-	{
-		if (side == -1)
-			parent->left = NULL;
-		else
-			parent->right = NULL;
-	}
-	else if ((*removed)->left != NULL && (*removed)->right == NULL)
-	{
-		if (side == -1)
-			parent->left = (*removed)->left;
-		else
-			parent->right = (*removed)->left;
-	}
-	else if ((*removed)->right != NULL && (*removed)->left == NULL)
-	{
-		if (side == -1)
-			parent->left = (*removed)->right;
-		else
-			parent->right = (*removed)->right;
-	}
-	else
-	{
-		tnode *leftMost = (*removed)->right;
-		while (leftMost->left != NULL)
-		{
-			leftMost = leftMost->left;
-		}
-		if (side == -1)
-			parent->left = leftMost;
-		else
-			parent->right = leftMost;
-	}
-	return root;
-}*/
 
 void tree_remove(tnode** root, int k, tnode** removed)
 {
@@ -356,4 +307,25 @@ void tree_remove(tnode** root, int k, tnode** removed)
 		x->key = leftMost->key;
 		x->data = leftMost->data;
 	}
+}
+
+void dkey_printer(tnode *n)
+{
+	printf("%d ", n->key);
+}
+
+void tsort(int* arr, ulong length)
+{
+	tnode *tree = NULL;
+	for (ulong i = 0; i < length; i++)
+	{
+		tnode *node = malloc(sizeof(tnode));
+		node->key = arr[i];
+		node->left = NULL;
+		node->right = NULL;
+		node->data = NULL;
+		tree = tree_add(tree, node);
+	}
+	traverse_infix(tree, dkey_printer);
+	printf("\n");
 }
