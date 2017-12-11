@@ -71,7 +71,7 @@ int main(void)
 		}
 		else if (command == 1)
 		{
-			printf("Input matrix rows, cols, concentration and output flag (0 - false, not 0 - true) splitting with space: ");
+			printf("Input matrix rows, cols, fullness and output flag (0 - no out, 1 - full, 2 - sparse only) splitting with space: \n");
 			ulong rows, cols;
 			int flag;
 			float conc;			
@@ -83,7 +83,7 @@ int main(void)
 			{				
 				matrix a = mrandom(rows, cols, conc);
 				matrix b = mrandom(rows, cols, conc);
-				if (flag)
+				if (flag == 1)
 				{
 					printf("\nFirst: \n");
 					print_matrix(&a);
@@ -96,26 +96,32 @@ int main(void)
 				ulong time_sparse = tick();
 				ssumm(&sa, &sb);
 				time_sparse = tick() - time_sparse;
-				if (flag)
+				if (flag == 1)
 				{
 					printf("\nResult: \n");
 					print_sparse(&sa);
 					printf("\nInsides: \n");
 					print_sparse_structure(&sa);
 				}
+				if (flag == 2)
+				{
+					printf("Resulting matrix:\n");
+					print_sparse_structure(&sa);
+				}
 				ulong time_simple = tick();
 				msumm(&a, &b);
 				time_simple = tick() - time_simple;
-				if (flag)
-				{
-					printf("\nResult simple: \n");
-					print_matrix(&a);
-				}
 
 				printf("Time of simple summ: %llu\n",  time_simple);
 				printf("Time of sparse summ: %llu\n", time_sparse);
 				printf("Ratio (simple to sparse): %3.2f\n", (double)time_simple / time_sparse);
-				ulong spmem = (sizeof(float)+sizeof(ulong)) * sa.a_len + sizeof(ulong)* sa.rows;
+				ulong spmem = (sizeof(float)+sizeof(ulong)) * sa.a_len;// +sizeof(ulong)* sa.rows;
+				node_t *node = sa.LI;
+				while (node)
+				{
+					spmem += sizeof(node_t);
+					node = node->next;
+				}
 				ulong simplemem = sizeof(matrix) + sizeof(float)* (a.cols * a.rows - 1);
 				printf("Memory of simple: %llu\n", simplemem);
 				printf("Memory of sparse: %llu\n", spmem);

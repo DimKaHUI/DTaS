@@ -15,8 +15,9 @@
 float mget(const smatrix* matrix, ulong line, ulong column)
 {
 	float value = 0;
-	ulong N1 = matrix->LI[line];
-	ulong N2 = matrix->LI[line + 1];
+	//ulong N1 = matrix->LI[line];
+	ulong N1 = getval(matrix->LI, line);
+	ulong N2 = getval(matrix->LI, line + 1);
 	for (ulong k = N1; k < N2; k++)
 	{		
 		if (matrix->LJ[k] == column)
@@ -26,6 +27,24 @@ float mget(const smatrix* matrix, ulong line, ulong column)
 		}
 	}
 	return value;
+}
+
+ulong getval(node_t* head, ulong ind)
+{
+	for (ulong i = 0; i < ind; i++)
+	{
+		head = head->next;
+	}
+	return head->n;
+}
+
+void setval(node_t* head, ulong ind, ulong val)
+{
+	for (ulong i = 0; i < ind; i++)
+	{
+		head = head->next;
+	}
+	head->n = val;
 }
 
 void msumm(matrix* a, const matrix* b)
@@ -39,14 +58,6 @@ int read_matrix(matrix* a)
 {
 	printf("Input matrix: \n");
 	// Memory allocation
-	/*a->data = malloc(sizeof(float*) * a->rows + sizeof(float) * a->cols * a->rows);
-	if (a->data == NULL)
-		return ERROR_ALLOCATION;
-	// Pointers
-	for (ulong i = 0; i < a->rows; i++)
-	{
-		a->data[i] = (float*)a->data + sizeof(float*)* a->rows + sizeof(float)* i;
-	}*/
 	a->data = malloc(sizeof(float*)* a->rows);
 	if (a->data == NULL)
 		return ERROR_ALLOCATION;
@@ -156,13 +167,28 @@ void m2s(const matrix* m, smatrix* s)
 	}	
 
 	if (count == 0)
+	{
+		s->A = NULL;
+		s->LJ = NULL;
+		s->LI = NULL;
+		s->a_len = 0;
 		return;
+	}
 
 	s->A = malloc(sizeof(float)* count);
 	s->LJ = malloc(sizeof(ulong) * count);
-	s->LI = malloc(sizeof(ulong)* (m->rows + 1));
+	//s->LI = malloc(sizeof(ulong)* (m->rows + 1));
+	s->LI = malloc(sizeof(node_t));
+	node_t *n = s->LI;
+	for (ulong i = 0; i < m->rows + 1; i++)
+	{
+		n->next = malloc(sizeof(node_t));
+		n = n->next;
+	}
+	n->next = NULL;
 
-	s->LI[m->rows] = count;
+	//s->LI[m->rows] = count;
+	setval(s->LI, m->rows, count);
 	ulong pos_a = count;	
 	for (ulong i = m->rows - 1; ; i--)
 	{
@@ -178,7 +204,8 @@ void m2s(const matrix* m, smatrix* s)
 			}
 			if (j == 0)
 			{
-				s->LI[i] = pos_a;
+				//s->LI[i] = pos_a;
+				setval(s->LI, i, pos_a);
 				break;
 			}			
 		}
@@ -248,8 +275,14 @@ void print_sparse_structure(const smatrix* m)
 	for (ulong i = 0; i < count; i++)
 		printf("%4.4llu ", m->LJ[i]);
 	printf("\nLI: ");
-	for (ulong i = 0; i < m->rows + 1; i++)
-		printf("%4.4llu ", m->LI[i]);
+	//for (ulong i = 0; i < m->rows + 1; i++)
+		//printf("%4.4llu ", m->LI[i]);
+	node_t *node = m->LI;
+	while (node)
+	{
+		printf("%4.4llu ", node->n);
+		node = node->next;
+	}
 	printf("\n");
 }
 
@@ -264,7 +297,8 @@ ulong getrow(const smatrix *s, ulong index)
 {
 	for (ulong i = s->rows; i >= 0; i--)
 	{
-		if (s->LI[i] <= index)
+		//if (s->LI[i] <= index)
+		if (getval(s->LI, i) <= index)
 			return i;
 		if (i == 0)
 			break;
@@ -309,7 +343,8 @@ int ssumm(smatrix* a, const smatrix* b)
 			a->A = realloc(a->A, a->a_len * sizeof(float));
 			a->LJ = realloc(a->LJ, a->a_len * sizeof(ulong));
 			for (ulong k = row + 1; k <= a->rows; k++)
-				a->LI[k]--;
+				setval(a->LI, k, getval(a->LI, k) - 1);
+				//a->LI[k]--;
 			i--;
 		}
 	}
@@ -321,11 +356,10 @@ int ssumm(smatrix* a, const smatrix* b)
 		float aval = mget(a, row, col);
 		if (fabs(aval) <= EPS)
 		{
-			//print_sparse_structure(a);
-			ulong inspos = a->LI[row];
-			for (; a->LJ[inspos] < col && inspos < a->LI[row + 1]; inspos++);
-			//inspos--;
-
+			//ulong inspos = a->LI[row];
+			ulong inspos = getval(a->LI, row);
+			//for (; a->LJ[inspos] < col && inspos < a->LI[row + 1]; inspos++);
+			for (; a->LJ[inspos] < col && inspos < getval(a->LI, row + 1); inspos++);
 			a->a_len++;
 			a->A = realloc(a->A, a->a_len * sizeof(float));
 			a->LJ = realloc(a->LJ, a->a_len * sizeof(ulong));
@@ -339,7 +373,8 @@ int ssumm(smatrix* a, const smatrix* b)
 			}			
 
 			for (ulong k = row + 1; k <= a->rows; k++)
-				a->LI[k]++;
+				setval(a->LI, k, getval(a->LI, k) + 1);
+				//a->LI[k]++;
 			a->A[inspos] = b->A[i];
 			a->LJ[inspos] = col;
 
