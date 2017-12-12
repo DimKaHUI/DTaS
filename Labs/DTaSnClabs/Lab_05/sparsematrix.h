@@ -5,6 +5,7 @@
 // Error codes
 #define ERROR_ALLOCATION -11
 #define ERROR_IO -12
+#define ERROR_OUT_OF_RANGE -13
 
 typedef unsigned long long ulong;
 
@@ -36,6 +37,7 @@ void setval(node_t *head, ulong ind, ulong val);	   // Запись в список по индекс
 
 void msumm(matrix* a, const matrix* b);                // Simple algorithm, result: a = a + b;
 int read_matrix(matrix *a);                            // Чтение матрицы из консоли
+int read_zero_excluding(matrix *a);
 void free_matrix(matrix *a);                           // Освобождение памяти, выделенной под матрицу
 void print_matrix(const matrix *m);                    // Печать матрицы
 matrix mrandom(ulong x, ulong y, float concentration); // Генерация случайной матрицы

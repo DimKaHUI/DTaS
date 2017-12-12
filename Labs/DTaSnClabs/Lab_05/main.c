@@ -26,7 +26,8 @@ int main(void)
 	int err = 0;
 	printf("1. Summ of random matrixes\n");
 	printf("2. Summ of manually created matrixes\n");
-	printf("3. Test convertion");
+	printf("3. Test convertion\n");
+	printf("4. Summ, zero matrixes excluding manually defined\n");
 	
 	do
 	{
@@ -174,10 +175,48 @@ int main(void)
 				}
 			}
 		}
+		else if (command == 4)
+		{
+			printf("Input matrix rows and cols splitting with space: ");
+			ulong rows, cols;
+			if (scanf("%llu %llu", &rows, &cols) != 2)
+			{
+				err = ERROR_ILLEGAL_SYMBOL;
+			}
+			else
+			{
+				printf("Inputting first matrix: \n");
+				matrix a = { .rows = rows, .cols = cols };
+				err = read_zero_excluding(&a);		
+				if (err != 0)
+				{
+					goto errors;
+				}
+				printf("\nInputting second matrix: \n");
+				matrix b = { .rows = rows, .cols = cols };
+				err = read_zero_excluding(&b);	
+				if (err != 0)
+				{
+					goto errors;
+				}
+				smatrix sa, sb;
+				m2s(&a, &sa);
+				m2s(&b, &sb);
+				printf("\nFirst matrix: \n");
+				print_sparse_structure(&sa);
+				printf("\nSecond matrix: \n");
+				print_sparse_structure(&sb);
+
+				ssumm(&sa, &sb);
+				printf("\nResult: \n");
+				print_sparse_structure(&sa);
+			}
+		}
 		else
 			err = ERROR_UNKNOWN_CMD;
 
 		// Error handling
+		errors:
 		switch (err)
 		{
 		case ERROR_ALLOCATION:
@@ -191,7 +230,10 @@ int main(void)
 			break;
 		case ERROR_UNKNOWN_CMD:
 			printf("Unknown command!\n");
-			break;			
+			break;
+		case ERROR_OUT_OF_RANGE:
+			printf("Index was outside the size of matrix\n");
+			break;
 		}
 	} while (command != 0);
 }

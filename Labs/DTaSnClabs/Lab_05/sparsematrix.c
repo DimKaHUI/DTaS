@@ -80,6 +80,50 @@ int read_matrix(matrix* a)
 	return 0;
 }
 
+int read_zero_excluding(matrix* a)
+{
+	ulong count;
+	ulong x, y;
+	float value;
+	printf("Input number of not-nill elements: \n");
+	if (scanf("%llu", &count) != 1)
+		return ERROR_IO;
+	a->data = malloc(sizeof(float*)* a->rows);
+	if (a->data == NULL)
+		return ERROR_ALLOCATION;
+	for (ulong i = 0; i < a->rows; i++)
+	{
+		a->data[i] = malloc(sizeof(float)* a->cols);
+		if (a->data[i] == NULL)
+			return ERROR_ALLOCATION;
+	}
+	for (ulong i = 0; i < a->rows; i++)
+	for (ulong j = 0; j < a->cols; j++)
+	{		
+		a->data[i][j] = 0;
+	}
+
+	printf("Input points:\n");
+	for (ulong k = 0; k < count; k++)
+	{
+		printf("Line: ");
+		if (scanf("%llu", &x) != 1)
+			return ERROR_IO;
+		printf("Column: ");
+		if (scanf("%llu", &y) != 1)
+			return ERROR_IO;
+		printf("Value: ");
+		if (scanf("%f", &value) != 1)
+			return ERROR_IO;
+		if (x >= a->rows || y >= a->cols)
+		{
+			return ERROR_OUT_OF_RANGE;
+		}
+		a->data[x][y] = value;
+	}
+	return 0;
+}
+
 void free_matrix(matrix* a)
 {
 	for (ulong i = 0; i < a->rows; i++)
@@ -270,17 +314,17 @@ void print_sparse_structure(const smatrix* m)
 
 	printf(" A: ");
 	for (ulong i = 0; i < count; i++)
-		printf("%3.2f ", m->A[i]);
+		printf("%+3.3f ", m->A[i]);
 	printf("\nLJ: ");
 	for (ulong i = 0; i < count; i++)
-		printf("%4.4llu ", m->LJ[i]);
+		printf("%6.6llu ", m->LJ[i]);
 	printf("\nLI: ");
 	//for (ulong i = 0; i < m->rows + 1; i++)
 		//printf("%4.4llu ", m->LI[i]);
 	node_t *node = m->LI;
-	while (node)
+	while (node->next)
 	{
-		printf("%4.4llu ", node->n);
+		printf("%6.6llu ", node->n);
 		node = node->next;
 	}
 	printf("\n");
