@@ -114,7 +114,7 @@ int main(void)
 
 				printf("Time of simple summ: %llu\n",  time_simple);
 				printf("Time of sparse summ: %llu\n", time_sparse);
-				printf("Ratio (simple to sparse): %3.2f\n", (double)time_simple / time_sparse);
+				printf("Ratio (sparse to simple): %3.2f\n", (double)time_sparse / time_simple);
 				ulong spmem = (sizeof(float)+sizeof(ulong)) * sa.a_len + sizeof(ulong)* sa.rows;
 				ulong simplemem = sizeof(matrix) + sizeof(float)* (a.cols * a.rows - 1);
 				printf("Memory of simple: %llu\n", simplemem);

@@ -289,12 +289,27 @@ void printal(ulong* arr, ulong n)
 	printf("\n");
 }
 
+ulong count_adds(smatrix *a, const smatrix *b)
+{
+	ulong res = 0;
+	for (ulong i = 0; i < b->a_len; i++)
+	{
+		ulong row = getrow(b, i);
+		ulong col = getcol(b, i);
+		float aval = mget(a, row, col);
+		if (fabs(aval) <= EPS)
+			res++;
+	}
+	return res;
+}
+
 int ssumm(smatrix* a, const smatrix* b)
 {
+	ulong memshift = 0;
 	for (ulong i = 0; i < a->a_len; i++)
 	{
 		ulong row = getrow(a, i);
-		ulong col = getcol(a, i);
+		ulong col = getcol(a, i);		
 		float bval = mget(b, row, col);
 		a->A[i] += bval;
 		
@@ -306,14 +321,17 @@ int ssumm(smatrix* a, const smatrix* b)
 				a->LJ[k] = a->LJ[k + 1];
 			}			
 			a->a_len--;
-			a->A = realloc(a->A, a->a_len * sizeof(float));
-			a->LJ = realloc(a->LJ, a->a_len * sizeof(ulong));
+			memshift++;
 			for (ulong k = row + 1; k <= a->rows; k++)
 				a->LI[k]--;
 			i--;
 		}
 	}
 	
+	ulong admem = count_adds(a, b);
+	a->A = realloc(a->A, (a->a_len + admem - memshift) * sizeof(float));
+	a->LJ = realloc(a->LJ, (a->a_len + admem - memshift) * sizeof(ulong));
+
 	for (ulong i = 0; i < b->a_len; i++)
 	{
 		ulong row = getrow(b, i);
@@ -327,9 +345,7 @@ int ssumm(smatrix* a, const smatrix* b)
 			//inspos--;
 
 			a->a_len++;
-			a->A = realloc(a->A, a->a_len * sizeof(float));
-			a->LJ = realloc(a->LJ, a->a_len * sizeof(ulong));
-			
+		
 			for (ulong k = a->a_len - 1; k >= inspos; k--)
 			{
 				a->A[k] = a->A[k - 1];
