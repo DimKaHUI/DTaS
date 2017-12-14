@@ -85,40 +85,58 @@ int main(void)
 			{				
 				matrix a = mrandom(rows, cols, conc);
 				matrix b = mrandom(rows, cols, conc);
+				matrix mres;
 				if (flag == 1)
 				{
 					printf("\nFirst: \n");
 					print_matrix(&a);
 					printf("\nSecond: \n");
 					print_matrix(&b);
+				}				
+				smatrix sa, sb, sres;
+// TODO ERROR
+				sres.LI = malloc(sizeof(node_t));
+				node_t *node = sres.LI;
+				for (uint i = 0; i < a.rows + 1; i++)
+				{
+					node->next = malloc(sizeof(node_t));
+					node = node->next;
 				}
-				smatrix sa, sb;
+				node->next = NULL;
+
 				m2s(&a, &sa);
 				m2s(&b, &sb);
+				if (flag == 2)
+				{
+					printf("\nFirst: \n");
+					print_sparse_structure(&sa);
+					printf("\nSecond: \n");
+					print_sparse_structure(&sb);
+				}
 				uint time_sparse = tick();
-				ssumm(&sa, &sb);
+				ssummres(&sa, &sb, &sres);
 				time_sparse = tick() - time_sparse;
 				if (flag == 1)
 				{
 					printf("\nResult: \n");
-					print_sparse(&sa);
+					print_sparse(&sres);
 					printf("\nInsides: \n");
-					print_sparse_structure(&sa);
+					print_sparse_structure(&sres);
 				}
 				if (flag == 2)
 				{
 					printf("Resulting matrix:\n");
-					print_sparse_structure(&sa);
+					print_sparse_structure(&sres);
 				}
 				uint time_simple = tick();
-				msumm(&a, &b);
+				msummres(&a, &b, &mres);
 				time_simple = tick() - time_simple;
 
 				printf("Time of simple summ: %u\n",  time_simple);
 				printf("Time of sparse summ: %u\n", time_sparse);
 				printf("Ratio (simple to sparse): %3.2f\n", (double)time_simple / time_sparse);
-				uint spmem = (sizeof(float)+sizeof(uint)) * sa.a_len;// +sizeof(ulong)* sa.rows;
-				node_t *node = sa.LI;
+				uint spmem = (sizeof(float)+sizeof(uint)) * sa.a_len + sizeof(uint) * 2;
+				node = sa.LI;
 				while (node)
 				{
 					spmem += sizeof(node_t);
@@ -140,6 +158,7 @@ int main(void)
 			}
 			else
 			{
+				matrix mres;
 				printf("Inputting first matrix: \n");
 				matrix a = {.rows = rows, .cols = cols};
 				read_matrix(&a);
@@ -150,19 +169,30 @@ int main(void)
 				read_matrix(&b);
 				printf("\nSecond matrix: \n");
 				print_matrix(&b);
-				smatrix sa, sb;
+				smatrix sa, sb, sres;
+
+// TODO ERROR
+				sres.LI = malloc(sizeof(node_t));
+				node_t *node = sres.LI;
+				for (uint i = 0; i < a.rows + 1; i++)
+				{
+					node->next = malloc(sizeof(node_t));
+					node = node->next;
+				}
+				node->next = NULL;
+
 				m2s(&a, &sa);
 				m2s(&b, &sb);
 
-				ssumm(&sa, &sb);
+				ssummres(&sa, &sb, &sres);
 				printf("\nResult: \n");
 				print_sparse(&sa);
 				printf("\nInsides: \n");
 				print_sparse_structure(&sa);
 
-				msumm(&a, &b);
+				msummres(&a, &b, &mres);
 				printf("\nResult simple: \n");
-				print_matrix(&a);
+				print_matrix(&mres);
 
 				matrix result;
 				s2m(&sa, &result);
@@ -200,7 +230,18 @@ int main(void)
 				{
 					goto errors;
 				}
-				smatrix sa, sb;
+				smatrix sa, sb, sres;
+
+// TODO ERROR
+				sres.LI = malloc(sizeof(node_t));
+				node_t *node = sres.LI;
+				for (uint i = 0; i < a.rows + 1; i++)
+				{
+					node->next = malloc(sizeof(node_t));
+					node = node->next;
+				}
+				node->next = NULL;
+
 				m2s(&a, &sa);
 				m2s(&b, &sb);
 				printf("\nFirst matrix: \n");
@@ -208,9 +249,9 @@ int main(void)
 				printf("\nSecond matrix: \n");
 				print_sparse_structure(&sb);
 
-				ssumm(&sa, &sb);
+				ssummres(&sa, &sb, &sres);
 				printf("\nResult: \n");
-				print_sparse_structure(&sa);
+				print_sparse_structure(&sres);
 			}
 		}
 		else if (command == 5)
@@ -234,7 +275,7 @@ int main(void)
 				{
 					goto errors;
 				}
-				smatrix sa, sb;
+				smatrix sa, sb, sres;
 				m2s(&a, &sa);
 				m2s(&b, &sb);
 				printf("\nFirst matrix: \n");
@@ -244,9 +285,9 @@ int main(void)
 				print_sparse(&sb);
 				print_sparse_structure(&sb);
 
-				smatrix ssumm;
-				ssumm.LI = malloc(sizeof(node_t));
-				node_t *node = ssumm.LI;
+// TODO ERROR
+				sres.LI = malloc(sizeof(node_t));
+				node_t *node = sres.LI;
 				for (uint i = 0; i < sa.rows + 1; i++)
 				{
 					node->next = malloc(sizeof(node_t));
@@ -255,15 +296,15 @@ int main(void)
 				node->next = NULL;
 
 				uint time_sparse = tick();
-				ssummres(&sa, &sb, &ssumm);
+				ssummres(&sa, &sb, &sres);
 				time_sparse = tick() - time_sparse;
 				matrix msumm;
 				uint time_simple = tick();				
 				msummres(&a, &b, &msumm);
 				time_simple = tick() - time_simple;
 				printf("\nResult: \n");
-				print_sparse(&ssumm);
-				print_sparse_structure(&ssumm);
+				print_sparse(&sres);
+				print_sparse_structure(&sres);
 				printf("Correct:\n");
 				print_matrix(&msumm);
 

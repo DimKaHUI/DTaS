@@ -401,14 +401,13 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 {
 	res->cols = a->cols;
 	res->rows = a->rows;
-	res->a_len = 0;
 	uint res_len = a->a_len + b->a_len;
 	res->A = malloc(res_len * sizeof(uint));
 	res->LJ = malloc(res_len * sizeof(uint));
 	/*
 	res->LI = malloc(sizeof(node_t));
 	node_t *node = res->LI;
-	for (ulong i = 0; i < a->rows + 1; i++)
+	for (uint i = 0; i < a->rows + 1; i++)
 	{
 		node->next = malloc(sizeof(node_t));
 		node = node->next;
@@ -438,22 +437,23 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 	{
 		bnode = bnode->next;
 	}
-	uint A2 = anode->n;;
+	uint A2 = anode->n;
 	uint B2 = bnode->n;
+	uint res_pos = 0;
 	for (uint i = 0; i < res->rows; i++)
 	{		
 		//printf("I: %u, a_row: %u, A2: %u, a_pos: %u, b_row: %u, b_pos: %u\n", i, a_row, A2, a_pos, b_row, b_pos);
 		
-		resnode->n = res->a_len;
+		resnode->n = res_pos;
 		resnode = resnode->next;
 
 		if (a_row == i && b_row == i)
 		{
 			while (b->LJ[b_pos] < a->LJ[b_pos] && b_pos < B2)
 			{
-				res->A[res->a_len] = b->A[b_pos];
-				res->LJ[res->a_len] = b->LJ[b_pos];
-				res->a_len++;
+				res->A[res_pos] = b->A[b_pos];
+				res->LJ[res_pos] = b->LJ[b_pos];
+				res_pos++;
 				b_pos++;
 			}
 			while (a_pos < A2)
@@ -463,26 +463,26 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 					float tmp = a->A[a_pos] + b->A[b_pos];					
 					if (fabs(tmp) >= EPS)
 					{
-						res->A[res->a_len] = tmp;
-						res->LJ[res->a_len] = a->LJ[a_pos];
-						res->a_len++;						
+						res->A[res_pos] = tmp;
+						res->LJ[res_pos] = a->LJ[a_pos];
+						res_pos++;						
 					}
 					a_pos++;
 					b_pos++;
 				}
 				else
 				{
-					res->A[res->a_len] = a->A[a_pos];
-					res->LJ[res->a_len] = a->LJ[a_pos];
-					res->a_len++;
+					res->A[res_pos] = a->A[a_pos];
+					res->LJ[res_pos] = a->LJ[a_pos];
+					res_pos++;
 					a_pos++;
 				}
 			}
 			while (b_pos < B2)
 			{
-				res->A[res->a_len] = b->A[b_pos];
-				res->LJ[res->a_len] = b->LJ[b_pos];
-				res->a_len++;
+				res->A[res_pos] = b->A[b_pos];
+				res->LJ[res_pos] = b->LJ[b_pos];
+				res_pos++;
 				b_pos++;
 			}
 		}
@@ -490,9 +490,9 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 		{
 			while (a_pos < A2)
 			{
-				res->A[res->a_len] = a->A[a_pos];
-				res->LJ[res->a_len] = a->LJ[a_pos];
-				res->a_len++;
+				res->A[res_pos] = a->A[a_pos];
+				res->LJ[res_pos] = a->LJ[a_pos];
+				res_pos++;
 				a_pos++;
 			}
 		}
@@ -500,9 +500,9 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 		{
 			while (b_pos < B2)
 			{
-				res->A[res->a_len] = b->A[b_pos];
-				res->LJ[res->a_len] = b->LJ[b_pos];
-				res->a_len++;
+				res->A[res_pos] = b->A[b_pos];
+				res->LJ[res_pos] = b->LJ[b_pos];
+				res_pos++;
 				b_pos++;
 			}
 		}
@@ -528,7 +528,8 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 			}
 		}		
 	}
-	resnode->n = res->a_len;
+	resnode->n = res_pos;
+	res->a_len = res_pos;
 	return 0;
 }
 
