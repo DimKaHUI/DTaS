@@ -298,15 +298,15 @@ int main(void)
 				uint time_sparse = tick();
 				ssummres(&sa, &sb, &sres);
 				time_sparse = tick() - time_sparse;
-				matrix msumm;
+				matrix mres;
 				uint time_simple = tick();				
-				msummres(&a, &b, &msumm);
+				msummres(&a, &b, &mres);
 				time_simple = tick() - time_simple;
 				printf("\nResult: \n");
 				print_sparse(&sres);
 				print_sparse_structure(&sres);
 				printf("Correct:\n");
-				print_matrix(&msumm);
+				print_matrix(&mres);
 
 				printf("\nTime of simple summ: %u\n", time_simple);
 				printf("Time of sparse summ: %u\n", time_sparse);
