@@ -4,21 +4,18 @@
 #include <stdio.h>
 #include <math.h>
 #include "sparsematrix.h"
-#include <time.h>
-#include <conio.h>
 
-// time = (t2–t1)*t + t1
 #define RAND01 (float)rand() / RAND_MAX
 #define RAND(min, max) (max - min) * RAND01 + min
 #define EPS 0.01
 
-float mget(const smatrix* matrix, ulong line, ulong column)
+float mget(const smatrix* matrix, uint line, uint column)
 {
 	float value = 0;
 	//ulong N1 = matrix->LI[line];
-	ulong N1 = getval(matrix->LI, line);
-	ulong N2 = getval(matrix->LI, line + 1);
-	for (ulong k = N1; k < N2; k++)
+	uint N1 = getval(matrix->LI, line);
+	uint N2 = getval(matrix->LI, line + 1);
+	for (uint k = N1; k < N2; k++)
 	{		
 		if (matrix->LJ[k] == column)
 		{
@@ -29,18 +26,22 @@ float mget(const smatrix* matrix, ulong line, ulong column)
 	return value;
 }
 
-ulong getval(node_t* head, ulong ind)
+uint getval(node_t* head, uint ind)
 {
-	for (ulong i = 0; i < ind && head; i++)
+	if (head == NULL)
+		return 0;
+	for (uint i = 0; i < ind && head; i++)
 	{
 		head = head->next;
 	}
+	if (head == NULL)
+		return 0;
 	return head->n;
 }
 
-void setval(node_t* head, ulong ind, ulong val)
+void setval(node_t* head, uint ind, uint val)
 {
-	for (ulong i = 0; i < ind; i++)
+	for (uint i = 0; i < ind; i++)
 	{
 		head = head->next;
 	}
@@ -49,9 +50,31 @@ void setval(node_t* head, ulong ind, ulong val)
 
 void msumm(matrix* a, const matrix* b)
 {
-	for (ulong i = 0; i < a->rows; i++)
-	for (ulong j = 0; j < a->cols; j++)
+	for (uint i = 0; i < a->rows; i++)
+	for (uint j = 0; j < a->cols; j++)
 		a->data[i][j] = a->data[i][j] + b->data[i][j];
+}
+
+int msummres(const matrix* a, const matrix* b, matrix* res)
+{
+	res->cols = a->cols;
+	res->rows = a->rows;
+	res->data = malloc(sizeof(float*)* res->rows);
+	if (res->data == NULL)
+		return ERROR_ALLOCATION;
+	for (uint i = 0; i < res->rows; i++)
+	{
+		res->data[i] = malloc(sizeof(float)* res->cols);
+		if (res->data[i] == NULL)
+			return ERROR_ALLOCATION;
+	}
+
+	for (uint i = 0; i < res->rows; i++)
+	for (uint j = 0; j < res->cols; j++)
+	{
+		res->data[i][j] = a->data[i][j] + b->data[i][j];
+	}
+	return 0;
 }
 
 int read_matrix(matrix* a)
@@ -61,17 +84,17 @@ int read_matrix(matrix* a)
 	a->data = malloc(sizeof(float*)* a->rows);
 	if (a->data == NULL)
 		return ERROR_ALLOCATION;
-	for (ulong i = 0; i < a->rows; i++)
+	for (uint i = 0; i < a->rows; i++)
 	{
 		a->data[i] = malloc(sizeof(float)* a->cols);
 		if (a->data[i] == NULL)
 			return ERROR_ALLOCATION;
 	}
 
-	for (ulong i = 0; i < a->rows; i++)
-	for (ulong j = 0; j < a->cols; j++)
+	for (uint i = 0; i < a->rows; i++)
+	for (uint j = 0; j < a->cols; j++)
 	{
-		printf("(%llu, %llu): ", i + 1, j + 1);
+		printf("(%u, %u): ", i + 1, j + 1);
 		float res;
 		if (scanf("%f", &res) != 1)
 			return ERROR_IO;
@@ -82,35 +105,35 @@ int read_matrix(matrix* a)
 
 int read_zero_excluding(matrix* a)
 {
-	ulong count;
-	ulong x, y;
+	uint count;
+	uint x, y;
 	float value;
 	printf("Input number of not-nill elements: \n");
-	if (scanf("%llu", &count) != 1)
+	if (scanf("%u", &count) != 1)
 		return ERROR_IO;
 	a->data = malloc(sizeof(float*)* a->rows);
 	if (a->data == NULL)
 		return ERROR_ALLOCATION;
-	for (ulong i = 0; i < a->rows; i++)
+	for (uint i = 0; i < a->rows; i++)
 	{
 		a->data[i] = malloc(sizeof(float)* a->cols);
 		if (a->data[i] == NULL)
 			return ERROR_ALLOCATION;
 	}
-	for (ulong i = 0; i < a->rows; i++)
-	for (ulong j = 0; j < a->cols; j++)
+	for (uint i = 0; i < a->rows; i++)
+	for (uint j = 0; j < a->cols; j++)
 	{		
 		a->data[i][j] = 0;
 	}
 
 	printf("Input points:\n");
-	for (ulong k = 0; k < count; k++)
+	for (uint k = 0; k < count; k++)
 	{
 		printf("Line: ");
-		if (scanf("%llu", &x) != 1)
+		if (scanf("%u", &x) != 1)
 			return ERROR_IO;
 		printf("Column: ");
-		if (scanf("%llu", &y) != 1)
+		if (scanf("%u", &y) != 1)
 			return ERROR_IO;
 		printf("Value: ");
 		if (scanf("%f", &value) != 1)
@@ -126,16 +149,16 @@ int read_zero_excluding(matrix* a)
 
 void free_matrix(matrix* a)
 {
-	for (ulong i = 0; i < a->rows; i++)
+	for (uint i = 0; i < a->rows; i++)
 		free(a->data[i]);
 	free(a->data);
 }
 
 void print_matrix(const matrix* m)
 {
-	for (ulong i = 0; i < m->rows; i++)
+	for (uint i = 0; i < m->rows; i++)
 	{
-		for (ulong j = 0; j < m->cols; j++)
+		for (uint j = 0; j < m->cols; j++)
 		{
 			if (fabs(m->data[i][j]) > EPS)
 				printf("%+3.2f ", m->data[i][j]);
@@ -147,7 +170,7 @@ void print_matrix(const matrix* m)
 	
 }
 
-matrix mrandom(ulong x, ulong y, float concentration)
+matrix mrandom(uint x, uint y, float concentration)
 {	
 	matrix a;
 	a.rows = x;
@@ -155,15 +178,15 @@ matrix mrandom(ulong x, ulong y, float concentration)
 	a.data = malloc(sizeof(float*)* a.rows);
 	if (a.data == NULL)
 		return a;
-	for (ulong i = 0; i < a.rows; i++)
+	for (uint i = 0; i < a.rows; i++)
 	{
 		a.data[i] = malloc(sizeof(float)* a.cols);
 		if (a.data[i] == NULL)
 			return a;
 	}
 
-	for (ulong i = 0; i < a.rows; i++)
-	for (ulong j = 0; j < a.cols; j++)
+	for (uint i = 0; i < a.rows; i++)
+	for (uint j = 0; j < a.cols; j++)
 	{
 		float chance = RAND01;
 		if (concentration > chance)
@@ -180,11 +203,11 @@ int mequal(const matrix* a, const matrix* b)
 		return 0;
 	if (a->cols != b->cols)
 		return 0;
-	for (ulong i = 0; i < a->rows; i++)
-	for (ulong j = 0; j < a->cols; j++)
+	for (uint i = 0; i < a->rows; i++)
+	for (uint j = 0; j < a->cols; j++)
 	if (a->data[i][j] != b->data[i][j])
 	{
-		//printf("Comparison failed on checking (%llu, %llu): %3.2f ~ %3.2f\n", i, j, a->data[i][j], b->data[i][j]);
+		//printf("Comparison failed on checking (%u, %u): %3.2f ~ %3.2f\n", i, j, a->data[i][j], b->data[i][j]);
 		return 0;
 	}
 	return 1;
@@ -194,12 +217,12 @@ void m2s(const matrix* m, smatrix* s)
 {
 	s->rows = m->rows;
 	s->cols = m->cols;
-	s->LI = malloc(sizeof(ulong)* m->rows);
-	ulong count = 0;
-	ulong rows = 0;
-	ulong prev_row = -1;
-	for (ulong i = 0; i < m->rows; i++)
-	for (ulong j = 0; j < m->cols; j++)
+	s->LI = malloc(sizeof(uint)* m->rows);
+	uint count = 0;
+	uint rows = 0;
+	uint prev_row = -1;
+	for (uint i = 0; i < m->rows; i++)
+	for (uint j = 0; j < m->cols; j++)
 	if (m->data[i][j] != 0)
 	{
 		count++;
@@ -214,17 +237,19 @@ void m2s(const matrix* m, smatrix* s)
 	{
 		s->A = NULL;
 		s->LJ = NULL;
-		s->LI = NULL;
+		s->LI = malloc(sizeof(uint));
+		s->LI->n = 0;
+		s->LI->next = NULL;
 		s->a_len = 0;
 		return;
 	}
 
 	s->A = malloc(sizeof(float)* count);
-	s->LJ = malloc(sizeof(ulong) * count);
+	s->LJ = malloc(sizeof(uint) * count);
 	//s->LI = malloc(sizeof(ulong)* (m->rows + 1));
 	s->LI = malloc(sizeof(node_t));
 	node_t *n = s->LI;
-	for (ulong i = 0; i < m->rows + 1; i++)
+	for (uint i = 0; i < m->rows + 1; i++)
 	{
 		n->next = malloc(sizeof(node_t));
 		n = n->next;
@@ -233,11 +258,11 @@ void m2s(const matrix* m, smatrix* s)
 
 	//s->LI[m->rows] = count;
 	setval(s->LI, m->rows, count);
-	ulong pos_a = count;	
-	for (ulong i = m->rows - 1; ; i--)
+	uint pos_a = count;	
+	for (uint i = m->rows - 1; ; i--)
 	{
 		int flag = 0;
-		for (ulong j = m->cols - 1; ; j--)
+		for (uint j = m->cols - 1; ; j--)
 		{
 			if (m->data[i][j] != 0)
 			{
@@ -264,14 +289,14 @@ int s2m(const smatrix* s, matrix* m)
 	m->data = malloc(sizeof(float*)* s->rows);
 	if (m->data == NULL)
 		return ERROR_ALLOCATION;
-	for (ulong i = 0; i < s->rows; i++)
+	for (uint i = 0; i < s->rows; i++)
 	{
 		m->data[i] = malloc(sizeof(float)* s->cols);
 		if (m->data[i] == NULL)
 			return ERROR_ALLOCATION;
 	}
-	for (ulong i = 0; i < s->rows; i++)
-	for (ulong j = 0; j < s->cols; j++)
+	for (uint i = 0; i < s->rows; i++)
+	for (uint j = 0; j < s->cols; j++)
 	{
 		m->data[i][j] = mget(s, i, j);
 	}
@@ -282,9 +307,9 @@ int s2m(const smatrix* s, matrix* m)
 
 void print_sparse(const smatrix* m)
 {
-	for (ulong i = 0; i < m->rows; i++)
+	for (uint i = 0; i < m->rows; i++)
 	{
-		for (ulong j = 0; j < m->cols; j++)
+		for (uint j = 0; j < m->cols; j++)
 		{
 			if (fabs(mget(m, i, j)) > EPS)
 				printf("%+3.2f ", mget(m, i, j));
@@ -297,11 +322,11 @@ void print_sparse(const smatrix* m)
 
 void print_sparse_structure(const smatrix* m)
 {
-	ulong count = 0;
-	ulong rows = 0;
-	ulong prev_row = -1;
-	for (ulong i = 0; i < m->rows; i++)
-	for (ulong j = 0; j < m->cols; j++)
+	uint count = 0;
+	uint rows = 0;
+	uint prev_row = -1;
+	for (uint i = 0; i < m->rows; i++)
+	for (uint j = 0; j < m->cols; j++)
 	if (mget(m, i, j) != 0)
 	{
 		count++;
@@ -313,18 +338,18 @@ void print_sparse_structure(const smatrix* m)
 	}
 
 	printf(" A: ");
-	for (ulong i = 0; i < count; i++)
+	for (uint i = 0; i < m->a_len; i++)
 		printf("%+3.3f ", m->A[i]);
 	printf("\nLJ: ");
-	for (ulong i = 0; i < count; i++)
-		printf("%6.6llu ", m->LJ[i]);
+	for (uint i = 0; i < m->a_len; i++)
+		printf("%6.6u ", m->LJ[i]);
 	printf("\nLI: ");
 	//for (ulong i = 0; i < m->rows + 1; i++)
-		//printf("%4.4llu ", m->LI[i]);
+		//printf("%4.4u ", m->LI[i]);
 	node_t *node = m->LI;
-	while (node->next)
+	while (node && node->next)
 	{
-		printf("%6.6llu ", node->n);
+		printf("%6.6u ", node->n);
 		node = node->next;
 	}
 	printf("\n");
@@ -337,9 +362,9 @@ void free_sparce(smatrix* a)
 	free(a->LJ);
 }
 
-ulong getrow(const smatrix *s, ulong index)
+uint getrow(const smatrix *s, uint index)
 {
-	for (ulong i = s->rows; i >= 0; i--)
+	for (uint i = s->rows; i >= 0; i--)
 	{
 		//if (s->LI[i] <= index)
 		if (getval(s->LI, i) <= index)
@@ -349,81 +374,162 @@ ulong getrow(const smatrix *s, ulong index)
 	}
 	return 0;
 }
-ulong getcol(const smatrix *s, ulong index)
+uint getcol(const smatrix *s, uint index)
 {
 	return s->LJ[index];
 }
 
-void printaf(float* arr, ulong n)
+void printaf(float* arr, uint n)
 {
-	for (ulong i = 0; i < n; i++)
+	for (uint i = 0; i < n; i++)
 		printf("%+3.2f ", arr[i]);
 	printf("\n");
 }
-void printal(ulong* arr, ulong n)
+void printal(uint* arr, uint n)
 {
-	for (ulong i = 0; i < n; i++)
-		printf("%5.1llu ", arr[i]);
+	for (uint i = 0; i < n; i++)
+		printf("%5.1u ", arr[i]);
 	printf("\n");
 }
 
 int ssumm(smatrix* a, const smatrix* b)
 {
-	for (ulong i = 0; i < a->a_len; i++)
-	{
-		ulong row = getrow(a, i);
-		ulong col = getcol(a, i);
-		float bval = mget(b, row, col);
-		a->A[i] += bval;
-		
-		if (fabs(a->A[i]) <= EPS) //Is zero now
-		{
-			for (ulong k = i; k < a->a_len; k++)
-			{
-				a->A[k] = a->A[k + 1];
-				a->LJ[k] = a->LJ[k + 1];
-			}			
-			a->a_len--;
-			a->A = realloc(a->A, a->a_len * sizeof(float));
-			a->LJ = realloc(a->LJ, a->a_len * sizeof(ulong));
-			for (ulong k = row + 1; k <= a->rows; k++)
-				setval(a->LI, k, getval(a->LI, k) - 1);
-				//a->LI[k]--;
-			i--;
-		}
-	}
-	
-	for (ulong i = 0; i < b->a_len; i++)
-	{
-		ulong row = getrow(b, i);
-		ulong col = getcol(b, i);
-		float aval = mget(a, row, col);
-		if (fabs(aval) <= EPS)
-		{
-			//ulong inspos = a->LI[row];
-			ulong inspos = getval(a->LI, row);
-			//for (; a->LJ[inspos] < col && inspos < a->LI[row + 1]; inspos++);
-			for (; a->LJ[inspos] < col && inspos < getval(a->LI, row + 1); inspos++);
-			a->a_len++;
-			a->A = realloc(a->A, a->a_len * sizeof(float));
-			a->LJ = realloc(a->LJ, a->a_len * sizeof(ulong));
-			
-			for (ulong k = a->a_len - 1; k >= inspos; k--)
-			{
-				a->A[k] = a->A[k - 1];
-				a->LJ[k] = a->LJ[k - 1];
-				if (k == 0)
-					break;
-			}			
-
-			for (ulong k = row + 1; k <= a->rows; k++)
-				setval(a->LI, k, getval(a->LI, k) + 1);
-				//a->LI[k]++;
-			a->A[inspos] = b->A[i];
-			a->LJ[inspos] = col;
-
-			//print_sparse_structure(a);
-		}
-	}
 	return 0;
 }
+
+int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
+{
+	res->cols = a->cols;
+	res->rows = a->rows;
+	res->a_len = 0;
+	uint res_len = a->a_len + b->a_len;
+	res->A = malloc(res_len * sizeof(uint));
+	res->LJ = malloc(res_len * sizeof(uint));
+	/*
+	res->LI = malloc(sizeof(node_t));
+	node_t *node = res->LI;
+	for (ulong i = 0; i < a->rows + 1; i++)
+	{
+		node->next = malloc(sizeof(node_t));
+		node = node->next;
+	}
+	node->next = NULL;*/
+
+	uint a_pos = 0, b_pos = 0;
+	node_t *anode = a->LI;
+	node_t *bnode = b->LI;
+	node_t *resnode = res->LI;
+	uint a_row = 0, b_row = 0;
+	while (anode && anode->n < a_pos)
+	{
+		a_row++;
+		anode = anode->next;
+	}
+	while (bnode && bnode->n < b_pos)
+	{
+		b_row++;
+		bnode = bnode->next;
+	}
+	if (anode)
+	{
+		anode = anode->next;
+	}
+	if (bnode)
+	{
+		bnode = bnode->next;
+	}
+	uint A2 = anode->n;;
+	uint B2 = bnode->n;
+	for (uint i = 0; i < res->rows; i++)
+	{		
+		//printf("I: %u, a_row: %u, A2: %u, a_pos: %u, b_row: %u, b_pos: %u\n", i, a_row, A2, a_pos, b_row, b_pos);
+		
+		resnode->n = res->a_len;
+		resnode = resnode->next;
+
+		if (a_row == i && b_row == i)
+		{
+			while (b->LJ[b_pos] < a->LJ[b_pos] && b_pos < B2)
+			{
+				res->A[res->a_len] = b->A[b_pos];
+				res->LJ[res->a_len] = b->LJ[b_pos];
+				res->a_len++;
+				b_pos++;
+			}
+			while (a_pos < A2)
+			{
+				if (a->LJ[a_pos] == b->LJ[b_pos] && b_pos < B2)
+				{
+					float tmp = a->A[a_pos] + b->A[b_pos];					
+					if (fabs(tmp) >= EPS)
+					{
+						res->A[res->a_len] = tmp;
+						res->LJ[res->a_len] = a->LJ[a_pos];
+						res->a_len++;						
+					}
+					a_pos++;
+					b_pos++;
+				}
+				else
+				{
+					res->A[res->a_len] = a->A[a_pos];
+					res->LJ[res->a_len] = a->LJ[a_pos];
+					res->a_len++;
+					a_pos++;
+				}
+			}
+			while (b_pos < B2)
+			{
+				res->A[res->a_len] = b->A[b_pos];
+				res->LJ[res->a_len] = b->LJ[b_pos];
+				res->a_len++;
+				b_pos++;
+			}
+		}
+		if (a_row == i && b_row != i)
+		{
+			while (a_pos < A2)
+			{
+				res->A[res->a_len] = a->A[a_pos];
+				res->LJ[res->a_len] = a->LJ[a_pos];
+				res->a_len++;
+				a_pos++;
+			}
+		}
+		if (a_row != i && b_row == i)
+		{
+			while (b_pos < B2)
+			{
+				res->A[res->a_len] = b->A[b_pos];
+				res->LJ[res->a_len] = b->LJ[b_pos];
+				res->a_len++;
+				b_pos++;
+			}
+		}
+
+		if (a_pos >= A2)
+		{
+			uint old_a2 = A2;
+			while (old_a2 == A2)
+			{
+				anode = anode->next;
+				A2 = anode->n;
+				a_row++;
+			}
+		}
+		if (b_pos >= B2)
+		{
+			uint old_b2 = B2;
+			while (old_b2 == B2)
+			{
+				bnode = bnode->next;
+				B2 = bnode->n;
+				b_row++;
+			}
+		}		
+	}
+	resnode->n = res->a_len;
+	return 0;
+}
+
+
