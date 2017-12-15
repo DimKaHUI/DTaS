@@ -95,8 +95,9 @@ int main(void)
 				}				
 				smatrix sa, sb, sres;
 // TODO ERROR
+				node_t *node;
 				sres.LI = malloc(sizeof(node_t));
-				node_t *node = sres.LI;
+				node = sres.LI;
 				for (uint i = 0; i < a.rows + 1; i++)
 				{
 					node->next = malloc(sizeof(node_t));
@@ -231,6 +232,7 @@ int main(void)
 					goto errors;
 				}
 				smatrix sa, sb, sres;
+				matrix mres;
 
 // TODO ERROR
 				sres.LI = malloc(sizeof(node_t));
@@ -249,9 +251,29 @@ int main(void)
 				printf("\nSecond matrix: \n");
 				print_sparse_structure(&sb);
 
+				uint time_sparse = tick();
 				ssummres(&sa, &sb, &sres);
+				time_sparse = tick() - time_sparse;
+				uint time_simple = tick();
+				msummres(&a, &b, &mres);
+				time_simple = tick() - time_simple;
 				printf("\nResult: \n");
 				print_sparse_structure(&sres);
+
+				printf("\nTime of simple summ: %u\n", time_simple);
+				printf("Time of sparse summ: %u\n", time_sparse);
+				printf("Ratio (simple to sparse): %3.2f\n", (double)time_simple / time_sparse);
+				uint spmem = (sizeof(float)+sizeof(uint)) * sa.a_len + sizeof(uint)* 2;
+				node = sa.LI;
+				while (node)
+				{
+					spmem += sizeof(node_t);
+					node = node->next;
+				}
+				uint simplemem = sizeof(matrix)+sizeof(float)* (a.cols * a.rows - 1);
+				printf("Memory of simple: %u\n", simplemem);
+				printf("Memory of sparse: %u\n", spmem);
+				printf("Memory ratio (simple to sparse): %3.2f\n", (double)simplemem / spmem);
 			}
 		}
 		else if (command == 5)

@@ -404,15 +404,16 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 	uint res_len = a->a_len + b->a_len;
 	res->A = malloc(res_len * sizeof(uint));
 	res->LJ = malloc(res_len * sizeof(uint));
-	/*
-	res->LI = malloc(sizeof(node_t));
+	
+	/*res->LI = malloc(sizeof(node_t));
 	node_t *node = res->LI;
 	for (uint i = 0; i < a->rows + 1; i++)
 	{
 		node->next = malloc(sizeof(node_t));
 		node = node->next;
 	}
-	node->next = NULL;*/
+	node->next = NULL;	
+	*/
 
 	uint a_pos = 0, b_pos = 0;
 	node_t *anode = a->LI;
@@ -437,8 +438,16 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 	{
 		bnode = bnode->next;
 	}
-	uint A2 = anode->n;
-	uint B2 = bnode->n;
+	//uint A2 = anode->n;
+	uint A2 = 0, B2 = 0;
+	if (anode)
+	{
+		A2 = anode->n;
+	}
+	if (bnode)
+	{
+		B2 = bnode->n;
+	}
 	uint res_pos = 0;
 	for (uint i = 0; i < res->rows; i++)
 	{		
@@ -449,7 +458,7 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 
 		if (a_row == i && b_row == i)
 		{
-			while (b->LJ[b_pos] < a->LJ[b_pos] && b_pos < B2)
+			while (a->LJ && b->LJ && b->LJ[b_pos] < a->LJ[b_pos] && b_pos < B2)
 			{
 				res->A[res_pos] = b->A[b_pos];
 				res->LJ[res_pos] = b->LJ[b_pos];
@@ -458,7 +467,7 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 			}
 			while (a_pos < A2)
 			{
-				if (a->LJ[a_pos] == b->LJ[b_pos] && b_pos < B2)
+				if (a->LJ && b->LJ && a->LJ[a_pos] == b->LJ[b_pos] && b_pos < B2)
 				{
 					float tmp = a->A[a_pos] + b->A[b_pos];					
 					if (fabs(tmp) >= EPS)
@@ -470,7 +479,7 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 					a_pos++;
 					b_pos++;
 				}
-				else
+				else if (a->LJ)
 				{
 					res->A[res_pos] = a->A[a_pos];
 					res->LJ[res_pos] = a->LJ[a_pos];
@@ -510,21 +519,27 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 		if (a_pos >= A2)
 		{
 			uint old_a2 = A2;
-			while (old_a2 == A2)
+			while (old_a2 == A2 && anode)
 			{
 				anode = anode->next;
-				A2 = anode->n;
-				a_row++;
+				if (anode)
+				{
+					A2 = anode->n;
+					a_row++;
+				}
 			}
 		}
 		if (b_pos >= B2)
 		{
 			uint old_b2 = B2;
-			while (old_b2 == B2)
+			while (old_b2 == B2 && bnode)
 			{
 				bnode = bnode->next;
-				B2 = bnode->n;
-				b_row++;
+				if (bnode)
+				{
+					B2 = bnode->n;
+					b_row++;
+				}
 			}
 		}		
 	}
