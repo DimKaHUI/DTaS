@@ -7,9 +7,6 @@
 #include <time.h>
 #include <intrin.h>
 
-#define SIZE_X 1000
-#define SIZE_Y 1000
-
 #define ERROR_UNKNOWN_CMD -111
 #define ERROR_ILLEGAL_SYMBOL -121
 
@@ -28,7 +25,7 @@ int main(void)
 	printf("2. Summ of manually created matrixes\n");
 	printf("3. Test convertion\n");
 	printf("4. Summ, zero matrixes excluding manually defined\n");
-	printf("5. Test another alorithm.\n");
+	//printf("5. Test another alorithm.\n");
 	
 	do
 	{
