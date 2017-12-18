@@ -64,11 +64,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="dinarrstack.h" />
     <ClInclude Include="mytree.h" />
+    <ClInclude Include="polish_notation.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="dinarrstack.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="mytree.c" />
+    <ClCompile Include="polish_notation.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

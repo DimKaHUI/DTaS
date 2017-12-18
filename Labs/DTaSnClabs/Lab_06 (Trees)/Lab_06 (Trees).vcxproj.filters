@@ -18,12 +18,24 @@
     <ClInclude Include="mytree.h">
       <Filter>Заголовочные файлы</Filter>
     </ClInclude>
+    <ClInclude Include="dinarrstack.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="polish_notation.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="mytree.c">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
     <ClCompile Include="main.c">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="dinarrstack.c">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="polish_notation.c">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
   </ItemGroup>

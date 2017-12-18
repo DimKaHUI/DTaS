@@ -144,8 +144,8 @@ void traverse_postfix(tnode* root, method_t action)
 {
 	if (root == NULL)
 		return;
-	traverse_infix(root->left, action);	
-	traverse_infix(root->right, action);
+	traverse_postfix(root->left, action);
+	traverse_postfix(root->right, action);
 	action(root);
 }
 

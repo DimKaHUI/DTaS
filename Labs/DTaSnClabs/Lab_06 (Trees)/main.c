@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include <intrin.h>
+#include "polish_notation.h"
 
 #define EPS 0.001
 #define ERROR_ILLEGAL_SYMBOL -111
@@ -39,6 +40,11 @@ tnode *get_double(tnode *tree, double value)
 	if (right_res != NULL)
 		return right_res;
 	return NULL;
+}
+
+void trav_check_printer(tnode *node)
+{
+	printf("%2.2f ", *(double*)(node->data));
 }
 
 void printer(tnode *n)
@@ -147,6 +153,7 @@ int main(void)
 	printf("6. Search for value\n");
 	printf("7. Search for key\n");
 	printf("8. Analize efficiency of sorting and searching\n");
+	printf("9. Check tree traversing (prefix, infix, postfix)\n");
 
 		
 	tnode *tree = NULL;
@@ -169,9 +176,13 @@ int main(void)
 		}
 		else if (cmd == 1)
 		{
-
+			ulong 
+			time_building_tree,
+			time_building_stack,
+			time_calc_tree,
+			time_calc_stack;
 			float a, b, c, d, e, f, g, h, i;
-			printf("Input values for A, B, ... , I\n");
+			printf("Input values for A, B, ... , I splitting with space\n");
 			if (scanf("%f %f %f %f %f %f %f %f %f", &a, &b, &c, &d, &e, &f, &g, &h, &i) != 9)
 			{
 				err = ERROR_ILLEGAL_SYMBOL;
@@ -179,15 +190,34 @@ int main(void)
 			else
 			{
 				tnode *expr = NULL;
+				time_building_tree = tick();
 				expr = build_expr(a, b, c, d, e, f, g, h, i);
+				time_building_tree = tick() - time_building_tree;
 				print_tree_expr(expr, 0, printer);
+				time_calc_tree = tick();
 				float res = calculate(expr);
+				time_calc_tree = tick() - time_calc_tree;
 				printf("Result of calculation: %3.2f\n", res);
 				float check = a + (b * (c + (d * (e + f) - (g - h)) + i));
 				if (fabs(res - check) <= EPS)
 					printf("Result is correct!\n");
 				else
 					printf("Correct result: %3.2f\n", check);
+
+				time_building_stack = tick();
+				punit *expr_polish = build_expr_polish(a, b, c, d, e, f, g, h, i);
+				time_building_stack = tick() - time_building_stack;
+				//printf("Polish expr created!\n");
+				time_calc_stack = tick();
+				float res_polish = polish_calculate(expr_polish, 17);
+				printf("Result of calculation (using stack): %3.2f\n", res_polish);
+				time_calc_stack = tick() - time_calc_stack;
+
+				printf("Time of tree init: %llu\n", time_building_tree);
+				printf("Time of stack init: %llu\n", time_building_stack);
+				printf("Time of tree calculation: %llu\n", time_calc_tree);
+				printf("Time of stack calculation: %llu\n", time_calc_stack);
+				printf("Summ time ratio (stack to tree): %3.2f\n", (double)(time_building_stack + time_calc_stack) / (double)(time_building_tree + time_calc_tree));
 			}
 		}
 		else if (cmd == 2)
@@ -310,6 +340,16 @@ int main(void)
 			printf("Sorting of high tree with small amount of branches: %llu\n", sorting1);
 			printf("Sorting of high tree with good amount of branches: %llu\n", sorting2);
 			printf("Time ratio: %3.2lf\n", (double)sorting2 / (double)sorting1);
+		}
+		else if (cmd == 9)
+		{
+			printf("Prefix: ");
+			traverse_prefix(tree, trav_check_printer);
+			printf("\nInfix: ");
+			traverse_infix(tree, trav_check_printer);
+			printf("\nPostfix: ");
+			traverse_postfix(tree, trav_check_printer);
+			printf("\n");
 		}
 		else
 			err = ERROR_UNKNOWN_CMD;
