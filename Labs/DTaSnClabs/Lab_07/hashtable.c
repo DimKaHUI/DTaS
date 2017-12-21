@@ -134,6 +134,7 @@ int meml(htable_l* t)
 	int mem = sizeof(htable_l) + sizeof(hash_function);
 	for (int i = 0; i < t->length; i++)
 	{
+		mem += sizeof(node_t);
 		node_t *head = t->lists[i];
 		while (head)
 		{

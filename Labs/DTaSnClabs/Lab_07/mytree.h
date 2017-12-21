@@ -34,14 +34,11 @@ void print_tree(tnode *n, int level, method_t printer);      // Печать дерева, к
 void traverse_postfix(tnode *root, method_t action);         // Пост фиксный обход
 void traverse_infix(tnode *root, method_t action);           // Инфиксный обход
 void traverse_prefix(tnode *root, method_t action);          // Префиксный обход
-float calculate(tnode* root);                                // Вычисление выражения
 
 tnode *tree_add(tnode *root, tnode *node);                   // Добавление узла в дерево
-void tree_remove(tnode** root, int k, tnode** removed);      // Удаление узла из дерева
 tnode *get(tnode *tree, float k);                            // Поиск узла по ключу
-tnode *get_val(tnode *tree, void* value);                    // Поиск узла по значению
 
-// Для АВЛ деревьев
-tnode *avl_add(tnode *root, tnode *node);                   // Добавление узла в дерево
 
-tnode *get_cnt(tnode *tree, float k, int *comparisons);      // Поиск узла по ключу
+tnode *avl_add(tnode *root, tnode *node);                    // Добавление узла в авл-дерево
+
+tnode *get_cnt(tnode *tree, float k, int *comparisons);      // Поиск узла по ключу с подсчетом количества сравнений
