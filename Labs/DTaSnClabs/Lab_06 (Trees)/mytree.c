@@ -331,3 +331,12 @@ void tsort(int* arr, ulong length)
 	traverse_infix(tree, dkey_printer);
 	printf("\n");
 }
+
+
+// AVL
+unsigned char height(tnode *p)
+{
+	return p?p->:0
+}
+int bfactor(tnode *p);
+void fixheight(tnode *p);

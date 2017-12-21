@@ -15,6 +15,7 @@ typedef struct value_t             // Данные, которые хранит узел дерева
 
 typedef struct tnode               // Узел дерева
 {	
+	unsigned char height;
 	void *key;
 	void *data;
 	struct tnode *left;
@@ -28,7 +29,6 @@ typedef int(*comparator)(tnode*);
 tnode *build_expr(float a, float b, float c, float d, float e, float f, float g, float h, float i);
 
 void free_tree(tnode *n);                                    // Освобождение памяти, выделенной под дерево
-void print_tree_expr(tnode *n, int level, method_t printer); // Печать дерева, использующегося для вычисления выражения
 void print_tree(tnode *n, int level, method_t printer);      // Печать дерева, которое хранит числовые значения
 
 void traverse_postfix(tnode *root, method_t action);         // Пост фиксный обход
@@ -38,6 +38,10 @@ float calculate(tnode* root);                                // Вычисление выраж
 
 tnode *tree_add(tnode *root, tnode *node);                   // Добавление узла в дерево
 void tree_remove(tnode** root, int k, tnode** removed);      // Удаление узла из дерева
-tnode *get(tnode *tree, float k);                              // Поиск узла по ключу
+tnode *get(tnode *tree, float k);                            // Поиск узла по ключу
 tnode *get_val(tnode *tree, void* value);                    // Поиск узла по значению
-void tsort(int *arr, ulong length);                          // Сортировка массива с помощью дерева
+
+// Для АВЛ деревьев
+tnode *avl_add(tnode *root, tnode *node);                   // Добавление узла в дерево
+
+tnode *get_cnt(tnode *tree, float k, int *comparisons);      // Поиск узла по ключу

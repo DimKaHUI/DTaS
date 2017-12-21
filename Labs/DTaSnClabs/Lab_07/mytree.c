@@ -108,22 +108,6 @@ void free_tree(tnode* n)\
 	traverse_postfix(n, free);
 }
 
-void print_tree_expr(tnode* n, int level, method_t printer)
-{
-	if (n != NULL)
-	{
-		if (((value_t*)(n->data))->operation != none)
-			print_tree_expr(n->left, level + 1, printer);
-		for (int i = 0; i < level; i++)
-			printf("        ");
-		printer(n);
-		if (((value_t*)(n->data))->operation != none)
-			print_tree_expr(n->right, level + 1, printer);
-	}
-	else if (level == 0)
-		printf("Tree is empty\n");
-}
-
 void print_tree(tnode* n, int level, method_t printer)
 {
 	if (n != NULL)
@@ -336,4 +320,91 @@ void tsort(int* arr, ulong length)
 	}
 	traverse_infix(tree, dkey_printer);
 	printf("\n");
+}
+
+// AVL
+unsigned char height(tnode *p)
+{
+	return p ? p->height : 0;
+}
+int bfactor(tnode *p)
+{
+	return height(p->right) - height(p->left);
+}
+
+void fixheight(tnode *p)
+{
+	unsigned char hl = height(p->left);
+	unsigned char hr = height(p->right);
+	if (hl > hr)
+		p->height = hl + 1;
+	else
+		p->height = hr + 1;
+}
+
+tnode *rot_r(tnode* p)
+{
+	tnode *q = p->left;
+	p->left = q->right;
+	q->right = p;
+	fixheight(p);
+	fixheight(q);
+	return q;
+}
+
+tnode *rot_l(tnode* q)
+{
+	tnode *p = q->right;
+	q->right = p->left;
+	p->left = q;
+	fixheight(q);
+	fixheight(p);
+	return p;
+}
+
+tnode *balance(tnode *p)
+{
+	fixheight(p);
+	if (bfactor(p) == 2)
+	{
+		if (bfactor(p->right) < 0)
+			p->right = rot_r(p->right);
+		return rot_l(p);
+	}
+	if (bfactor(p) == -2)
+	{
+		if (bfactor(p->left) > 0)
+			p->left = rot_l(p->left);
+		return rot_r(p);
+	}
+	return p;
+}
+
+tnode* avl_add(tnode* root, tnode* node)
+{
+	if (!root)
+		return node;
+	if (*(float*)node->key > *(float*)root->key)
+		root->left = avl_add(root->left, node);
+	else
+		root->right = avl_add(root->right, node);
+	return balance(root);
+}
+
+tnode* get_cnt(tnode* tree, float k, int *comparisons)
+{
+	tnode *x = tree;
+	*comparisons = 0;
+	while (x != NULL)
+	{
+		(*comparisons)++;
+		int cmp = *(float*)x->key - k;
+		if (cmp == 0)
+			return x;
+		if (cmp < 0)
+			x = x->left;
+		else
+			x = x->right;
+	}
+	return NULL;
 }
