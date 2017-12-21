@@ -171,7 +171,13 @@ int compare_keys(tnode *k, tnode *x)
 {
 	if (k != NULL && x != NULL)
 	{
-		return k->key - x->key;
+		float k_res = *(float*)k->key;
+		float x_res = *(float*)x->key;
+		if (k_res > x_res)
+			return 1;
+		if (k_res == x_res)
+			return 0;
+		return -1;
 	}
 	if (k != NULL)
 		return 1;
@@ -209,12 +215,12 @@ tnode* tree_add(tnode* root, tnode* node)
 }
 
 
-tnode *get(tnode *tree, int k)
+tnode *get(tnode *tree, float k)
 {
 	tnode *x = tree;
 	while (x != NULL)
 	{
-		int cmp = x->key - k;
+		int cmp = *(float*)x->key - k;
 		if (cmp == 0)
 			return x;
 		if (cmp < 0)
@@ -225,14 +231,14 @@ tnode *get(tnode *tree, int k)
 	return NULL;
 }
 
-tnode *get_parent(tnode *tree, int k, int *side)
+tnode *get_parent(tnode *tree, float k, int *side)
 {
 	tnode *x = tree;
 	tnode *p = tree;
 	while (x != NULL)
 	{
 		printf("Key: %d, node: %d\n", k, x->key);
-		int cmp = k - x->key;
+		int cmp = k - *(float*)x->key;
 		if (cmp == 0)
 		{
 			if (p == x)
@@ -256,13 +262,13 @@ tnode *get_parent(tnode *tree, int k, int *side)
 }
 
 
-void tree_remove(tnode** root, int k, tnode** removed)
+void tree_remove(tnode** root, float k, tnode** removed)
 {
 	tnode* x = *root;
 	tnode *y = NULL;
 	while (x != NULL)
 	{
-		int cmp = x->key -k;
+		int cmp = *(float*)x->key -k;
 		printf("%d\n", cmp);
 		if (cmp == 0) {
 			break;
