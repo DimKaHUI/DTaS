@@ -18,5 +18,19 @@
     <ClCompile Include="main.c">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
+    <ClCompile Include="mgraph.c">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+    <ClCompile Include="lgraph.c">
+      <Filter>Файлы исходного кода</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lgraph.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
+    <ClInclude Include="mgraph.h">
+      <Filter>Заголовочные файлы</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

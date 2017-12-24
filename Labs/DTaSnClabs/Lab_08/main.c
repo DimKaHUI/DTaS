@@ -3,104 +3,16 @@
 #include <stdlib.h>
 #include "locale.h"
 #include <conio.h>
+#include "lgraph.h"
+#include "mgraph.h"
+#include <intrin.h>
 
-typedef struct graph
+#pragma intrinsic(__rdtsc)
+unsigned __int64 tick()
 {
-	int **link_matrix;
-	int *visited;
-	int nodes_count;
-}graph;
-
-graph *setup_graph(int nodes_count)
-{
-	graph *graph = malloc(sizeof(graph));
-	graph->link_matrix = malloc(sizeof(float*));
-	for (int i = 0; i < nodes_count; i++)
-		graph->link_matrix[i] = malloc(sizeof(float) * nodes_count);
-	graph->visited = malloc(sizeof(int)* nodes_count);
-
-	// Инициализация матрицы связей
-	int temp;
-	for (int i = 0; i < nodes_count; i++)
-	{
-		for (int j = 0; j < nodes_count; j++)
-		{
-			if (i == j)
-			{
-				graph->link_matrix[i][j] = 0;
-				continue;
-			}
-			printf("Input reachability from %d to %d: ", i + 1, j + 1);
-			scanf("%d", &temp);
-			if (temp != 0)
-				graph->link_matrix[i][j] = 1;
-			else
-				graph->link_matrix[i][j] = 0;
-		}
-	}
-
-	for (int i = 0; i < nodes_count; i++)
-	{
-		for (int j = 0; j < nodes_count; j++)
-		{
-			printf("%d ", graph->link_matrix[i][j]);
-		}
-		printf("\n");
-	}
-
-	for (int i = 0; i < nodes_count; i++)
-		graph->visited[i] = 0;
-	graph->nodes_count = nodes_count;
-	return graph;
+	return __rdtsc();
 }
 
-void reset_visited(graph *graph)
-{
-	for (int i = 0; i < graph->nodes_count; i++)
-		graph->visited[i] = 1;
-}
-
-void Reach(graph *graph, int v)
-{
-	graph->visited[v] = 0;
-	for (int u = 0; u < graph->nodes_count; u++)
-	{
-		if (graph->link_matrix[v][u] != 0 && graph->visited[u])
-			Reach(graph, u);
-	}
-}
-
-void Reachable(graph *graph, int v)
-{
-	reset_visited(graph);
-	printf("Nodes, not reachable from %d: ", v + 1);
-	Reach(graph, v);
-	for (int i = 0; i < graph->nodes_count; i++)
-	{
-		if (graph->visited[i] == 1 && i != v)
-		{
-			printf("%d ", i + 1);
-		}
-	}
-	printf("\n");
-}
-
-void print_graph(graph *g)
-{
-	FILE *output = fopen("out.gv", "w");
-	char letters[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
-	fprintf(output, "digraph lab_08 {\n");
-	for (int i = 0; i < g->nodes_count; i++)
-	for (int j = 0; j < g->nodes_count; j++)
-	{
-		if (g->link_matrix[i][j])
-		{
-			fprintf(output, "%c -> %c\n", letters[i], letters[j]);
-		}
-	}
-	fprintf(output, "}");
-	fclose(output);
-}
 
 int main()
 {
@@ -127,10 +39,43 @@ int main()
 		printf("Node number must be inside [1, %d]\n", size);
 		return -1;
 	}
-	struct graph *g = setup_graph(size);
-	Reachable(g, node - 1);
 
-	print_graph(g);
+	unsigned long long time_matrix, time_list, mmem, lmem;
 
+	printf("Matrix-based graph: \n");
+	struct graph g;
+	setup_graph(&g, size);
+	time_matrix = tick();
+	Reachable(&g, node - 1);
+	time_matrix = tick() - time_matrix;
+
+	printf("List-based graph: \n");
+	lgraph lgraph;
+	setup_lgraph(&lgraph, size);
+	time_list = tick();
+	m_reachable(&lgraph, node - 1);
+	time_list = tick() - time_list;
+	print_graph(&g);
+
+	mmem = sizeof(int)* size * size + sizeof(int)* size + sizeof(int);
+	lmem = sizeof(int);
+	for (int i = 0; i < size; i++)
+	{
+		node_t *head = lgraph.nodes[i];
+		lmem += sizeof(node_t);
+		while (head)
+		{
+			lmem += sizeof(node_t);
+			head = head->next;
+		}
+	}
+
+	printf("\nTime of matrix-based algorithm: %llu\n", time_matrix);
+	printf("Time of list-based algorithm: %llu\n", time_list);
+	printf("Ratio(list to algorithm: %3.2f\n", (double)time_list / (double)time_matrix);
+	printf("Memory of matrix-based graph: %llu\n", mmem);
+	printf("Memory of list-based graph: %llu\n", lmem);
+	printf("Ratio(list to algorithm: %3.2f\n", (double)lmem / (double)mmem);
+	printf("Finished!\n");
 	_getch();
 }

@@ -64,7 +64,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="lgraph.c" />
     <ClCompile Include="main.c" />
+    <ClCompile Include="mgraph.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="lgraph.h" />
+    <ClInclude Include="mgraph.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
