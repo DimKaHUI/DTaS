@@ -24,8 +24,6 @@ void print_real(bigreal_t real)
 {
 	bigint_t mantissa = real.M;
 
-	print_grid(&real);
-
 	if (mantissa.sign == -1)
 	{
 		printf("-");
@@ -374,7 +372,7 @@ int devide_real_int(bigreal_t dividend, bigint_t divisor, bigreal_t* result)
 			}
 			else
 				goto cycle_exit;
-			if (dividend.M.size - mantissa_current < dividend.floating_point_pos)
+			if (dividend.M.size - mantissa_current <= dividend.floating_point_pos)
 				division.p--;
 			mantissa_current++;
 			count_of_appendings++;			

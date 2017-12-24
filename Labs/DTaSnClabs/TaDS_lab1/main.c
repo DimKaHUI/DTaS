@@ -114,6 +114,7 @@ int main(void)
 	{
 		normalize_for_answer(&division);
 	}
+	print_grid(&division);
 	print_real(division);
 	printf("\n");
 

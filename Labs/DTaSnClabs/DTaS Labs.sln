@@ -17,7 +17,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab_06 (Trees)", "Lab_06 (T
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab_08", "Lab_08\Lab_08.vcxproj", "{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TaDS_lab1", "..\..\..\..\..\Users\DietrichMench\Downloads\TaDS_lab1\TaDS_lab1\TaDS_lab1.vcxproj", "{C99E3149-0040-4322-9A45-DEA45CED817D}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TaDS_lab1", "TaDS_lab1\TaDS_lab1.vcxproj", "{C99E3149-0040-4322-9A45-DEA45CED817D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
