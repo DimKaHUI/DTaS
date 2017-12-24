@@ -54,6 +54,7 @@ int float_hash(void *key)
 	float real_part = realK - integral_part;
 	int real_modified = (int)(real_part * 100);
 	integral_part ^= real_modified;
+	//integral_part ^= real_part;
 	return integral_part % TABLE_LEN;
 }
 
@@ -224,7 +225,7 @@ int main(void)
 			}
 			printf("Table with list: \n");
 			print_ltable(ltable, list_printer);
-			printf("Table with open addressation:\n");
+			printf("\nTable with open addressation:\n");
 			print_oatable(oatable, oa_printer);
 		}
 		else if (cmd == 5)
