@@ -85,6 +85,23 @@ void Reachable(graph *graph, int v)
 	printf("\n");
 }
 
+void print_graph(graph *g)
+{
+	FILE *output = fopen("out.gv", "w");
+	char letters[] = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J' };
+	fprintf(output, "digraph lab_08 {\n");
+	for (int i = 0; i < g->nodes_count; i++)
+	for (int j = 0; j < g->nodes_count; j++)
+	{
+		if (g->link_matrix[i][j])
+		{
+			fprintf(output, "%c -> %c\n", letters[i], letters[j]);
+		}
+	}
+	fprintf(output, "}");
+	fclose(output);
+}
+
 int main()
 {
 	int size, node;
@@ -112,5 +129,8 @@ int main()
 	}
 	struct graph *g = setup_graph(size);
 	Reachable(g, node - 1);
+
+	print_graph(g);
+
 	_getch();
 }

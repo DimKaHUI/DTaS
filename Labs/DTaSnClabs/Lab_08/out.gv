@@ -1,0 +1,6 @@
+digraph lab_08 {
+A -> C
+B -> A
+B -> C
+D -> C
+}
