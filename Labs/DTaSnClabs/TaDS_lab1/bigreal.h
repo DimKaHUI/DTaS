@@ -5,7 +5,7 @@
 
 #define EXP_BASE 10
 #define MANTISSA_MAX_SIZE 30
-#define ORDER_MAX 9999
+#define ORDER_MAX 99999
 #define ORDER_MAX_SIZE 5
 
 // Errors

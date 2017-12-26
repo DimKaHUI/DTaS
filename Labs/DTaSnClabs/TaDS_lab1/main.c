@@ -4,6 +4,7 @@
 #include "bigreal.h"
 
 
+
 int main(void)
 {
 	setlocale(LC_ALL, "RUS");
@@ -103,21 +104,24 @@ int main(void)
 
 	
 	printf("Division: \n");
-	print_real(division);
+	//print_real(division);
 
 	// TODO ANSWER_NORMALISATION
 	printf("\nНормализация: \n");
-	normalization_error = normalize(&division);
-	if (normalization_error != 0)
-		printf("Невозможно нормализовать введенное число.\n");
-	if (normalization_error == 0)
+	//normalization_error = normalize(&division);
+	//if (normalization_error != 0)
+		//printf("Невозможно нормализовать получившееся число.\n");
+	//if (normalization_error == 0 || 1)
+	
+	if(normalize_for_answer(&division) != 0)
+			printf("Невозможно нормализовать получившееся число, переполнение порядка.\n");	
+	else
 	{
-		normalize_for_answer(&division);
-	}
-	print_grid(&division);
-	print_real(division);
-	printf("\n");
 
+		print_grid(&division);
+		print_real(division);
+		printf("\n");
+	}
 	_getch();
 	return 0;
 }

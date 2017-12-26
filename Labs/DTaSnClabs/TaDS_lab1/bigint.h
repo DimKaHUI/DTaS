@@ -9,7 +9,7 @@
 struct BigInt
 {
 	int size;
-	char Num[BIGINT_SIZE];
+	char Num[BIGINT_SIZE + 1];
 
 	// Чэръ (-1 or 1)
 	char sign;

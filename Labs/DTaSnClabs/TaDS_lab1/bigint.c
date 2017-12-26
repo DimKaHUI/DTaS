@@ -4,6 +4,7 @@
 #include "bigint.h"
 #include <assert.h>
 #include "math.h"
+#include <stdlib.h>
 
 int read_big_int(bigint_t *big_int, int size)
 {
@@ -153,12 +154,12 @@ int compare(bigint_t a, bigint_t b)
 	return 0;
 }
 
-int max(int a, int b)
+/*int max(int a, int b)
 {
 	if (a >= b)
 		return a;
 	return b;
-}
+}*/
 
 bigint_t get_zero_int()
 {

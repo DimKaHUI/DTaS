@@ -218,7 +218,7 @@ int read_real_from_line(bigreal_t* real)
 			real->M.Num[pos] = atoi(&symbol);
 			real->M.size++;
 			//printf("В M.Num[%d] записано %d, символ номер %d (сомвол <%d>) в строке\n", pos, real->M.Num[pos], i, symbol);
-			if (real->M.size > BIGINT_SIZE)
+			if (real->M.size > BIGINT_SIZE + 1)
 				return ERROR_TOO_LARGE_MANTISSA;
 		}
 		i--;
@@ -303,9 +303,54 @@ int normalize(bigreal_t *real)
 
 int normalize_for_answer(bigreal_t* real)
 {
-	real->floating_point_pos++;
+	/*real->floating_point_pos++;
 	real->p++;
+	return 0;*/
+	// |ZEROS|
+	if (check_if_zero(&real->M) == 1)
+	{
+		real->p = 0;
+		return 0;
+	}
+
+	int L = real->floating_point_pos;
+	//int K = real->M.size - 1;
+	int K;
+	for (K = real->M.size - 1; K >= 0 && real->M.Num[K] == 0; K--);
+
+	//printf("\nL = %d, K = %d\n", L, K);
+	int offset = L - K;
+
+	if (real->p - offset > ORDER_MAX || real->p - offset < -ORDER_MAX)
+		return -1;
+
+	real->p -= offset - 1;
+	real->floating_point_pos = K + 1;
+
+	// removing zeros from right
+	int pos = 0;
+	while (real->M.Num[pos] == 0 && real->floating_point_pos >= pos)
+	{
+		for (int i = 0; i < real->M.size; i++)
+		{
+			real->M.Num[i] = real->M.Num[i + 1];
+		}
+		real->floating_point_pos--;
+		real->M.size--;
+	}
+
+	for (int i = real->M.size - 1; i >= 0 && real->M.Num[i] == 0; i--)
+	{
+		real->M.size--;
+	}
+
 	return 0;
+
+}
+
+int normalize_alt(bigreal_t* real)
+{
+	
 }
 
 int round_up(bigint_t *number)
@@ -399,7 +444,7 @@ int devide_real_int(bigreal_t dividend, bigint_t divisor, bigreal_t* result)
 		normalize(&division);
 
 		current_iteration++;
-	} while (division.M.size <= MANTISSA_MAX_SIZE);
+	} while (division.M.size < MANTISSA_MAX_SIZE);
 
 	cycle_exit:
 
