@@ -54,7 +54,7 @@ int my_snprintf(char* s, size_t n, const char* format, ...)
 		return -1;
 	}
 
-	n--; // Leaving space for \0
+	//n--; // Leaving space for \0
 
 	// Arguments
 	va_list vl;
@@ -99,7 +99,7 @@ int my_snprintf(char* s, size_t n, const char* format, ...)
 			i += 1;
 		}
 	}
-	s[pos > n + 1 ? n + 1 : pos] = '\0';
+	s[pos > n ? n : pos] = '\0';
 	va_end(vl);
 	return pos;
 }
