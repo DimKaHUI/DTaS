@@ -1,0 +1,42 @@
+#pragma once
+
+typedef unsigned long long ulong;
+
+enum operation_type                // Тип операции
+{
+	summ, prod, diff, none
+};
+
+typedef struct value_t             // Данные, которые хранит узел дерева
+{
+	enum operation_type operation;
+	float result;
+}value_t;
+
+typedef struct tnode               // Узел дерева
+{	
+	int key;
+	void *data;
+	struct tnode *left;
+	struct tnode *right;	
+} tnode;
+
+typedef void(*method_t)(tnode*);
+typedef int(*comparator)(tnode*);
+
+// Построение выражения для дерева
+tnode *build_expr(float a, float b, float c, float d, float e, float f, float g, float h, float i);
+
+void free_tree(tnode *n);                                    // Освобождение памяти, выделенной под дерево
+void print_tree_expr(tnode *n, int level, method_t printer); // Печать дерева, использующегося для вычисления выражения
+void print_tree(tnode *n, int level, method_t printer);      // Печать дерева, которое хранит числовые значения
+
+void traverse_postfix(tnode *root, method_t action);         // Пост фиксный обход
+void traverse_infix(tnode *root, method_t action);           // Инфиксный обход
+void traverse_prefix(tnode *root, method_t action);          // Префиксный обход
+
+tnode *tree_add(tnode *root, tnode *node);                   // Добавление узла в дерево
+void tree_remove(tnode** root, int k, tnode** removed);      // Удаление узла из дерева
+tnode *get(tnode *tree, int k);                              // Поиск узла по ключу
+tnode *get_val(tnode *tree, void* value);                    // Поиск узла по значению
+void tsort(int *arr, ulong length);                          // Сортировка массива с помощью дерева
