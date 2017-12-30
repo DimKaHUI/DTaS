@@ -108,22 +108,6 @@ void free_tree(tnode* n)\
 	traverse_postfix(n, free);
 }
 
-void print_tree_expr(tnode* n, int level, method_t printer)
-{
-	if (n != NULL)
-	{
-		if (((value_t*)(n->data))->operation != none)
-			print_tree_expr(n->left, level + 1, printer);
-		for (int i = 0; i < level; i++)
-			printf("        ");
-		printer(n);
-		if (((value_t*)(n->data))->operation != none)
-			print_tree_expr(n->right, level + 1, printer);
-	}
-	else if (level == 0)
-		printf("Tree is empty\n");
-}
-
 void print_tree(tnode* n, int level, method_t printer)
 {
 	if (n != NULL)
@@ -171,7 +155,13 @@ int compare_keys(tnode *k, tnode *x)
 {
 	if (k != NULL && x != NULL)
 	{
-		return k->key - x->key;
+		float k_res = *(float*)k->key;
+		float x_res = *(float*)x->key;
+		if (k_res > x_res)
+			return 1;
+		if (k_res == x_res)
+			return 0;
+		return -1;
 	}
 	if (k != NULL)
 		return 1;
@@ -209,12 +199,12 @@ tnode* tree_add(tnode* root, tnode* node)
 }
 
 
-tnode *get(tnode *tree, int k)
+tnode *get(tnode *tree, float k)
 {
 	tnode *x = tree;
 	while (x != NULL)
 	{
-		int cmp = x->key - k;
+		int cmp = *(float*)x->key - k;
 		if (cmp == 0)
 			return x;
 		if (cmp < 0)
@@ -225,14 +215,14 @@ tnode *get(tnode *tree, int k)
 	return NULL;
 }
 
-tnode *get_parent(tnode *tree, int k, int *side)
+tnode *get_parent(tnode *tree, float k, int *side)
 {
 	tnode *x = tree;
 	tnode *p = tree;
 	while (x != NULL)
 	{
 		printf("Key: %d, node: %d\n", k, x->key);
-		int cmp = k - x->key;
+		int cmp = k - *(float*)x->key;
 		if (cmp == 0)
 		{
 			if (p == x)
@@ -256,13 +246,13 @@ tnode *get_parent(tnode *tree, int k, int *side)
 }
 
 
-void tree_remove(tnode** root, int k, tnode** removed)
+void tree_remove(tnode** root, float k, tnode** removed)
 {
 	tnode* x = *root;
 	tnode *y = NULL;
 	while (x != NULL)
 	{
-		int cmp = x->key -k;
+		int cmp = *(float*)x->key -k;
 		printf("%d\n", cmp);
 		if (cmp == 0) {
 			break;
@@ -332,11 +322,89 @@ void tsort(int* arr, ulong length)
 	printf("\n");
 }
 
-
 // AVL
 unsigned char height(tnode *p)
 {
-	return p?p->:0
+	return p ? p->height : 0;
 }
-int bfactor(tnode *p);
-void fixheight(tnode *p);
+int bfactor(tnode *p)
+{
+	return height(p->right) - height(p->left);
+}
+
+void fixheight(tnode *p)
+{
+	unsigned char hl = height(p->left);
+	unsigned char hr = height(p->right);
+	if (hl > hr)
+		p->height = hl + 1;
+	else
+		p->height = hr + 1;
+}
+
+tnode *rot_r(tnode* p)
+{
+	tnode *q = p->left;
+	p->left = q->right;
+	q->right = p;
+	fixheight(p);
+	fixheight(q);
+	return q;
+}
+
+tnode *rot_l(tnode* q)
+{
+	tnode *p = q->right;
+	q->right = p->left;
+	p->left = q;
+	fixheight(q);
+	fixheight(p);
+	return p;
+}
+
+tnode *balance(tnode *p)
+{
+	fixheight(p);
+	if (bfactor(p) == 2)
+	{
+		if (bfactor(p->right) < 0)
+			p->right = rot_r(p->right);
+		return rot_l(p);
+	}
+	if (bfactor(p) == -2)
+	{
+		if (bfactor(p->left) > 0)
+			p->left = rot_l(p->left);
+		return rot_r(p);
+	}
+	return p;
+}
+
+tnode* avl_add(tnode* root, tnode* node)
+{
+	if (!root)
+		return node;
+	if (*(float*)node->key > *(float*)root->key)
+		root->left = avl_add(root->left, node);
+	else
+		root->right = avl_add(root->right, node);
+	return balance(root);
+}
+
+tnode* get_cnt(tnode* tree, float k, int *comparisons)
+{
+	tnode *x = tree;
+	*comparisons = 0;
+	while (x != NULL)
+	{
+		(*comparisons)++;
+		int cmp = *(float*)x->key - k;
+		if (cmp == 0)
+			return x;
+		if (cmp < 0)
+			x = x->left;
+		else
+			x = x->right;
+	}
+	return NULL;
+}

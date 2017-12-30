@@ -354,5 +354,18 @@ int main(void)
 		else
 			err = ERROR_UNKNOWN_CMD;
 
+		switch (err)
+		{
+		case ERROR_DINARR_ALLOCATION:
+			printf("Unable to allocate memory for dinamic stack\n");
+			break;
+		case ERROR_UNKNOWN_CMD:
+			printf("Unknown command\n");
+			break;
+		case ERROR_ILLEGAL_SYMBOL:
+			printf("Illegal symbol\n");
+			break;
+		}
+
 	} while (cmd != 0);
 }
