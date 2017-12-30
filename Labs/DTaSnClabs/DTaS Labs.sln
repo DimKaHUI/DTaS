@@ -15,7 +15,14 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab_05", "Lab_05\Lab_05.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab_06 (Trees)", "Lab_06 (Trees)\Lab_06 (Trees).vcxproj", "{2411DDA4-F760-4596-B4F1-E28E292E1629}"
 EndProject
+
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab_08", "Lab_08\Lab_08.vcxproj", "{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TaDS_lab1", "TaDS_lab1\TaDS_lab1.vcxproj", "{C99E3149-0040-4322-9A45-DEA45CED817D}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CLab_11", "CLab_11\CLab_11.vcxproj", "{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}"
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Lab_07", "Lab_07\Lab_07.vcxproj", "{3AA10576-8E21-4401-992E-B817475F813A}"
+
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,7 +94,37 @@ Global
 		{2411DDA4-F760-4596-B4F1-E28E292E1629}.Release|Mixed Platforms.Build.0 = Release|Win32
 		{2411DDA4-F760-4596-B4F1-E28E292E1629}.Release|Win32.ActiveCfg = Release|Win32
 		{2411DDA4-F760-4596-B4F1-E28E292E1629}.Release|Win32.Build.0 = Release|Win32
-		{3AA10576-8E21-4401-992E-B817475F813A}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Debug|Win32.ActiveCfg = Debug|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Debug|Win32.Build.0 = Debug|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Release|Any CPU.ActiveCfg = Release|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Release|Win32.ActiveCfg = Release|Win32
+		{DC3F4C84-7D70-4A0A-9B36-2AB6E84E3216}.Release|Win32.Build.0 = Release|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Debug|Win32.Build.0 = Debug|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Release|Any CPU.ActiveCfg = Release|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Release|Win32.ActiveCfg = Release|Win32
+		{C99E3149-0040-4322-9A45-DEA45CED817D}.Release|Win32.Build.0 = Release|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Debug|Win32.Build.0 = Debug|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Release|Any CPU.ActiveCfg = Release|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Release|Win32.ActiveCfg = Release|Win32
+		{50DFEB21-8988-4AEE-9A44-1CBC83C9152C}.Release|Win32.Build.0 = Release|Win32
+    {3AA10576-8E21-4401-992E-B817475F813A}.Debug|Any CPU.ActiveCfg = Debug|Win32
 		{3AA10576-8E21-4401-992E-B817475F813A}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
 		{3AA10576-8E21-4401-992E-B817475F813A}.Debug|Mixed Platforms.Build.0 = Debug|Win32
 		{3AA10576-8E21-4401-992E-B817475F813A}.Debug|Win32.ActiveCfg = Debug|Win32
