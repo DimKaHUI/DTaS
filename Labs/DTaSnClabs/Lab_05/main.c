@@ -143,6 +143,7 @@ int main(void)
 				uint simplemem = sizeof(matrix) + sizeof(float)* (a.cols * a.rows - 1);
 				printf("Memory of simple: %u\n", simplemem);
 				printf("Memory of sparse: %u\n", spmem);
+
 				printf("Memory ratio (simple to sparse): %3.2f\n", (double)simplemem / spmem);
 			}
 		}

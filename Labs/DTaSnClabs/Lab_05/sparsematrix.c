@@ -392,8 +392,23 @@ void printal(uint* arr, uint n)
 	printf("\n");
 }
 
+ulong count_adds(smatrix *a, const smatrix *b)
+{
+	ulong res = 0;
+	for (ulong i = 0; i < b->a_len; i++)
+	{
+		ulong row = getrow(b, i);
+		ulong col = getcol(b, i);
+		float aval = mget(a, row, col);
+		if (fabs(aval) <= EPS)
+			res++;
+	}
+	return res;
+}
+
 int ssumm(smatrix* a, const smatrix* b)
 {
+
 	return 0;
 }
 
@@ -452,6 +467,7 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 	for (uint i = 0; i < res->rows; i++)
 	{		
 		//printf("I: %u, a_row: %u, A2: %u, a_pos: %u, b_row: %u, b_pos: %u\n", i, a_row, A2, a_pos, b_row, b_pos);
+
 		
 		resnode->n = res_pos;
 		resnode = resnode->next;
@@ -460,6 +476,7 @@ int ssummres(const smatrix* a, const smatrix* b, smatrix* res)
 		{
 			while (a->LJ && b->LJ && b->LJ[b_pos] < a->LJ[b_pos] && b_pos < B2)
 			{
+
 				res->A[res_pos] = b->A[b_pos];
 				res->LJ[res_pos] = b->LJ[b_pos];
 				res_pos++;
