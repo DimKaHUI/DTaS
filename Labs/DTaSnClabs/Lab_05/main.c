@@ -7,9 +7,6 @@
 #include <time.h>
 #include <intrin.h>
 
-#define SIZE_X 1000
-#define SIZE_Y 1000
-
 #define ERROR_UNKNOWN_CMD -111
 #define ERROR_ILLEGAL_SYMBOL -121
 
@@ -26,7 +23,9 @@ int main(void)
 	int err = 0;
 	printf("1. Summ of random matrixes\n");
 	printf("2. Summ of manually created matrixes\n");
-	printf("3. Test convertion");
+	printf("3. Test convertion\n");
+	printf("4. Summ, zero matrixes excluding manually defined\n");
+	//printf("5. Test another alorithm.\n");
 	
 	do
 	{
@@ -45,8 +44,8 @@ int main(void)
 		if (command == 3)
 		{
 			printf("Input matrix size splitting with space: ");
-			ulong rows, cols;
-			if (scanf("%llu %llu", &rows, &cols) != 2)
+			uint rows, cols;
+			if (scanf("%u %u", &rows, &cols) != 2)
 			{
 				err = ERROR_ILLEGAL_SYMBOL;
 			}
@@ -71,11 +70,11 @@ int main(void)
 		}
 		else if (command == 1)
 		{
-			printf("Input matrix rows, cols, concentration and output flag (0 - false, not 0 - true) splitting with space: ");
-			ulong rows, cols;
+			printf("Input matrix rows, cols, fullness and output flag (0 - no out, 1 - full, 2 - sparse only) splitting with space: \n");
+			uint rows, cols;
 			int flag;
 			float conc;			
-			if (scanf("%llu %llu %f %d", &rows, &cols, &conc, &flag) != 4)
+			if (scanf("%u %u %f %d", &rows, &cols, &conc, &flag) != 4)
 			{
 				err = ERROR_ILLEGAL_SYMBOL;
 			}
@@ -83,55 +82,82 @@ int main(void)
 			{				
 				matrix a = mrandom(rows, cols, conc);
 				matrix b = mrandom(rows, cols, conc);
-				if (flag)
+				matrix mres;
+				if (flag == 1)
 				{
 					printf("\nFirst: \n");
 					print_matrix(&a);
 					printf("\nSecond: \n");
 					print_matrix(&b);
+				}				
+				smatrix sa, sb, sres;
+// TODO ERROR
+				node_t *node;
+				sres.LI = malloc(sizeof(node_t));
+				node = sres.LI;
+				for (uint i = 0; i < a.rows + 1; i++)
+				{
+					node->next = malloc(sizeof(node_t));
+					node = node->next;
 				}
-				smatrix sa, sb;
+				node->next = NULL;
+
 				m2s(&a, &sa);
 				m2s(&b, &sb);
-				ulong time_sparse = tick();
-				ssumm(&sa, &sb);
+				if (flag == 2)
+				{
+					printf("\nFirst: \n");
+					print_sparse_structure(&sa);
+					printf("\nSecond: \n");
+					print_sparse_structure(&sb);
+				}
+				uint time_sparse = tick();
+				ssummres(&sa, &sb, &sres);
 				time_sparse = tick() - time_sparse;
-				if (flag)
+				if (flag == 1)
 				{
 					printf("\nResult: \n");
-					print_sparse(&sa);
+					print_sparse(&sres);
 					printf("\nInsides: \n");
-					print_sparse_structure(&sa);
+					print_sparse_structure(&sres);
 				}
-				ulong time_simple = tick();
-				msumm(&a, &b);
-				time_simple = tick() - time_simple;
-				if (flag)
+				if (flag == 2)
 				{
-					printf("\nResult simple: \n");
-					print_matrix(&a);
+					printf("Resulting matrix:\n");
+					print_sparse_structure(&sres);
 				}
+				uint time_simple = tick();
+				msummres(&a, &b, &mres);
+				time_simple = tick() - time_simple;
 
-				printf("Time of simple summ: %llu\n",  time_simple);
-				printf("Time of sparse summ: %llu\n", time_sparse);
-				printf("Ratio (sparse to simple): %3.2f\n", (double)time_sparse / time_simple);
-				ulong spmem = (sizeof(float)+sizeof(ulong)) * sa.a_len + sizeof(ulong)* sa.rows;
-				ulong simplemem = sizeof(matrix) + sizeof(float)* (a.cols * a.rows - 1);
-				printf("Memory of simple: %llu\n", simplemem);
-				printf("Memory of sparse: %llu\n", spmem);
+				printf("Time of simple summ: %u\n",  time_simple);
+				printf("Time of sparse summ: %u\n", time_sparse);
+				printf("Ratio (simple to sparse): %3.2f\n", (double)time_simple / time_sparse);
+				uint spmem = (sizeof(float)+sizeof(uint)) * sa.a_len + sizeof(uint) * 2;
+				node = sa.LI;
+				while (node)
+				{
+					spmem += sizeof(node_t);
+					node = node->next;
+				}
+				uint simplemem = sizeof(matrix) + sizeof(float)* (a.cols * a.rows - 1);
+				printf("Memory of simple: %u\n", simplemem);
+				printf("Memory of sparse: %u\n", spmem);
+
 				printf("Memory ratio (simple to sparse): %3.2f\n", (double)simplemem / spmem);
 			}
 		}
 		else if (command == 2)
 		{
 			printf("Input matrix rows and cols splitting with space: ");
-			ulong rows, cols;
-			if (scanf("%llu %llu", &rows, &cols) != 2)
+			uint rows, cols;
+			if (scanf("%u %u", &rows, &cols) != 2)
 			{
 				err = ERROR_ILLEGAL_SYMBOL;
 			}
 			else
 			{
+				matrix mres;
 				printf("Inputting first matrix: \n");
 				matrix a = {.rows = rows, .cols = cols};
 				read_matrix(&a);
@@ -142,19 +168,30 @@ int main(void)
 				read_matrix(&b);
 				printf("\nSecond matrix: \n");
 				print_matrix(&b);
-				smatrix sa, sb;
+				smatrix sa, sb, sres;
+
+// TODO ERROR
+				sres.LI = malloc(sizeof(node_t));
+				node_t *node = sres.LI;
+				for (uint i = 0; i < a.rows + 1; i++)
+				{
+					node->next = malloc(sizeof(node_t));
+					node = node->next;
+				}
+				node->next = NULL;
+
 				m2s(&a, &sa);
 				m2s(&b, &sb);
 
-				ssumm(&sa, &sb);
+				ssummres(&sa, &sb, &sres);
 				printf("\nResult: \n");
 				print_sparse(&sa);
 				printf("\nInsides: \n");
 				print_sparse_structure(&sa);
 
-				msumm(&a, &b);
+				msummres(&a, &b, &mres);
 				printf("\nResult simple: \n");
-				print_matrix(&a);
+				print_matrix(&mres);
 
 				matrix result;
 				s2m(&sa, &result);
@@ -168,10 +205,139 @@ int main(void)
 				}
 			}
 		}
+		else if (command == 4)
+		{
+			printf("Input matrix rows and cols splitting with space: ");
+			uint rows, cols;
+			if (scanf("%u %u", &rows, &cols) != 2)
+			{
+				err = ERROR_ILLEGAL_SYMBOL;
+			}
+			else
+			{
+				printf("Inputting first matrix: \n");
+				matrix a = { .rows = rows, .cols = cols };
+				err = read_zero_excluding(&a);		
+				if (err != 0)
+				{
+					goto errors;
+				}
+				printf("\nInputting second matrix: \n");
+				matrix b = { .rows = rows, .cols = cols };
+				err = read_zero_excluding(&b);	
+				if (err != 0)
+				{
+					goto errors;
+				}
+				smatrix sa, sb, sres;
+				matrix mres;
+
+// TODO ERROR
+				sres.LI = malloc(sizeof(node_t));
+				node_t *node = sres.LI;
+				for (uint i = 0; i < a.rows + 1; i++)
+				{
+					node->next = malloc(sizeof(node_t));
+					node = node->next;
+				}
+				node->next = NULL;
+
+				m2s(&a, &sa);
+				m2s(&b, &sb);
+				printf("\nFirst matrix: \n");
+				print_sparse_structure(&sa);
+				printf("\nSecond matrix: \n");
+				print_sparse_structure(&sb);
+
+				uint time_sparse = tick();
+				ssummres(&sa, &sb, &sres);
+				time_sparse = tick() - time_sparse;
+				uint time_simple = tick();
+				msummres(&a, &b, &mres);
+				time_simple = tick() - time_simple;
+				printf("\nResult: \n");
+				print_sparse_structure(&sres);
+
+				printf("\nTime of simple summ: %u\n", time_simple);
+				printf("Time of sparse summ: %u\n", time_sparse);
+				printf("Ratio (simple to sparse): %3.2f\n", (double)time_simple / time_sparse);
+				uint spmem = (sizeof(float)+sizeof(uint)) * sa.a_len + sizeof(uint)* 2;
+				node = sa.LI;
+				while (node)
+				{
+					spmem += sizeof(node_t);
+					node = node->next;
+				}
+				uint simplemem = sizeof(matrix)+sizeof(float)* (a.cols * a.rows - 1);
+				printf("Memory of simple: %u\n", simplemem);
+				printf("Memory of sparse: %u\n", spmem);
+				printf("Memory ratio (simple to sparse): %3.2f\n", (double)simplemem / spmem);
+			}
+		}
+		else if (command == 5)
+		{
+			uint rows = 5, cols = 5;
+			if (scanf("%u %u", &rows, &cols) != 2)
+			{
+				err = ERROR_ILLEGAL_SYMBOL;
+			}
+			else
+			{
+				matrix a = { .rows = rows, .cols = cols };
+				a = mrandom(rows, cols, 0.1f);
+				if (err != 0)
+				{
+					goto errors;
+				}
+				matrix b = { .rows = rows, .cols = cols };
+				b = mrandom(rows, cols, 0.1f);
+				if (err != 0)
+				{
+					goto errors;
+				}
+				smatrix sa, sb, sres;
+				m2s(&a, &sa);
+				m2s(&b, &sb);
+				printf("\nFirst matrix: \n");
+				print_sparse(&sa);
+				print_sparse_structure(&sa);
+				printf("\nSecond matrix: \n");
+				print_sparse(&sb);
+				print_sparse_structure(&sb);
+
+// TODO ERROR
+				sres.LI = malloc(sizeof(node_t));
+				node_t *node = sres.LI;
+				for (uint i = 0; i < sa.rows + 1; i++)
+				{
+					node->next = malloc(sizeof(node_t));
+					node = node->next;
+				}
+				node->next = NULL;
+
+				uint time_sparse = tick();
+				ssummres(&sa, &sb, &sres);
+				time_sparse = tick() - time_sparse;
+				matrix mres;
+				uint time_simple = tick();				
+				msummres(&a, &b, &mres);
+				time_simple = tick() - time_simple;
+				printf("\nResult: \n");
+				print_sparse(&sres);
+				print_sparse_structure(&sres);
+				printf("Correct:\n");
+				print_matrix(&mres);
+
+				printf("\nTime of simple summ: %u\n", time_simple);
+				printf("Time of sparse summ: %u\n", time_sparse);
+				printf("Ratio (simple to sparse): %3.2f\n", (double)time_simple / time_sparse);
+			}
+		}
 		else
 			err = ERROR_UNKNOWN_CMD;
 
 		// Error handling
+		errors:
 		switch (err)
 		{
 		case ERROR_ALLOCATION:
@@ -185,7 +351,10 @@ int main(void)
 			break;
 		case ERROR_UNKNOWN_CMD:
 			printf("Unknown command!\n");
-			break;			
+			break;
+		case ERROR_OUT_OF_RANGE:
+			printf("Index was outside the size of matrix\n");
+			break;
 		}
 	} while (command != 0);
 }
